@@ -1,0 +1,41 @@
+{
+  "case": "api",
+  "arm": "off",
+  "behavior_oracle": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-c",
+      "import sys; sys.path.insert(0, \".\")\n\nfrom documents import list_documents\nrows=[{'id':1},{'id':2,'archived':True},{'id':3}]\nassert list_documents(rows)==[{'id':1},{'id':3}]\nassert list_documents(rows,1)==[{'id':1}]\nassert list_documents(rows,include_archived=True)==rows\nassert list_documents(rows,1,include_archived=True)==[{'id':1}]\nr=list_documents(rows); r[0]['id']=999; assert rows[0]['id']==1\n"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "seconds": 0.013
+  },
+  "own_tests": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-v"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "test_archived_records_excluded_before_limit (test_documents.DocumentTests.test_archived_records_excluded_before_limit) ... ok\ntest_include_archived_preserves_order_and_limit (test_documents.DocumentTests.test_include_archived_preserves_order_and_limit) ... ok\ntest_positional_limit (test_documents.DocumentTests.test_positional_limit) ... ok\ntest_results_are_copies_and_inputs_are_unchanged (test_documents.DocumentTests.test_results_are_copies_and_inputs_are_unchanged) ... ok\n\n----------------------------------------------------------------------\nRan 4 tests in 0.000s\n\nOK\n",
+    "seconds": 0.033,
+    "test_count": 4,
+    "status": "passed"
+  },
+  "changed_files": [
+    "documents.py",
+    "test_documents.py"
+  ],
+  "git_numstat": "7\t2\tdocuments.py\n36\t0\ttest_documents.py\n",
+  "untracked_files": [],
+  "no_change_gate": null,
+  "mutation": {
+    "status": "not_implemented"
+  },
+  "notes": "Subjective dimensions require rubric review; test pass alone is not full correctness."
+}

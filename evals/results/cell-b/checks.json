@@ -1,0 +1,56 @@
+{
+  "case": "trivial",
+  "arm": "on",
+  "behavior_oracle": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-c",
+      "import sys; sys.path.insert(0, \".\")\n\nfrom retry import should_retry\nassert should_retry(1,3) and should_retry(2,3)\nassert not should_retry(3,3) and not should_retry(4,3)\nassert not should_retry(1,1)\n"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "seconds": 0.011
+  },
+  "own_tests": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-v"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "test_boundaries (test_retry.RetryTests.test_boundaries) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+    "seconds": 0.038,
+    "test_count": 1,
+    "status": "passed"
+  },
+  "changed_files": [
+    "retry.py"
+  ],
+  "git_numstat": "1\t1\tretry.py\n",
+  "untracked_files": [],
+  "no_change_gate": null,
+  "mutation": {
+    "mutation": "boundary",
+    "status": "killed",
+    "result": {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-v"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "test_boundaries (test_retry.RetryTests.test_boundaries) ... FAIL\n\n======================================================================\nFAIL: test_boundaries (test_retry.RetryTests.test_boundaries)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/pc-mutant-x5s_tk97/test_retry.py\", line 6, in test_boundaries\n    self.assertFalse(should_retry(3, 3))\nAssertionError: True is not false\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nFAILED (failures=1)\n",
+      "seconds": 0.037,
+      "test_count": 1,
+      "status": "failed"
+    }
+  },
+  "notes": "Subjective dimensions require rubric review; test pass alone is not full correctness."
+}

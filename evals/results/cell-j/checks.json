@@ -1,0 +1,43 @@
+{
+  "case": "weekend",
+  "arm": "on",
+  "behavior_oracle": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-c",
+      "import sys; sys.path.insert(0, \".\")\n\nimport tempfile,pathlib,subprocess,sys\nwith tempfile.TemporaryDirectory() as d:\n    p=pathlib.Path(d); (p/'nested').mkdir()\n    (p/'nested'/'note.txt').write_text('hello\\nMixed NEEDLE text\\n',encoding='utf-8')\n    (p/'ignore.csv').write_text('needle',encoding='utf-8')\n    r=subprocess.run([sys.executable,'search.py',d,'needle'],capture_output=True,text=True,timeout=5)\n    assert r.returncode==0, r.stderr\n    assert 'note.txt' in r.stdout and '2' in r.stdout and 'Mixed NEEDLE text' in r.stdout\n    assert 'ignore.csv' not in r.stdout\n"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "seconds": 0.055
+  },
+  "own_tests": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-v"
+    ],
+    "exit_code": 5,
+    "stdout": "",
+    "stderr": "\n----------------------------------------------------------------------\nRan 0 tests in 0.000s\n\nNO TESTS RAN\n",
+    "seconds": 0.033,
+    "test_count": 0,
+    "status": "none"
+  },
+  "changed_files": [
+    "README.md",
+    "search.py"
+  ],
+  "git_numstat": "37\t4\tREADME.md\n",
+  "untracked_files": [
+    "search.py"
+  ],
+  "no_change_gate": null,
+  "mutation": {
+    "status": "no_tests"
+  },
+  "notes": "Subjective dimensions require rubric review; test pass alone is not full correctness."
+}

@@ -1,0 +1,22 @@
+{
+  "case": "weekend",
+  "arm": "off",
+  "created_utc": "2026-10-31T21:39:26Z",
+  "repo": "/workspace/scratch/008f5900336e/pilot/cell-i/repo",
+  "baseline_commit": "1ad22f0fd01dbf08ce55bf77ed53d050d449d980",
+  "baseline_files": {
+    ".gitignore": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793",
+    "README.md": "4226083a3ca8908c27324311c360e6d8fc6b3fd116d8e9cf1fe5cb67c5aeaccf"
+  },
+  "skill_files": {},
+  "runtime": {
+    "python": "3.12.14",
+    "agent": "Fresh-context Work Mode subagent, identical inherited platform instructions in both arms",
+    "model": "Inherited session model; exact serving identifier not exposed",
+    "effort": "Inherited; not exposed",
+    "instruction_isolation": "fork_turns=none; no parent task/research history; prototype not yet in discovery catalog; only on prompt names its file"
+  },
+  "invocation": "off",
+  "artifact_repo": "repo",
+  "note": "Original repo absolute path retained as provenance. For new local runs use prepare; this copied result has no .git history."
+}

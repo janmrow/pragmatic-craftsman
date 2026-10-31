@@ -1,0 +1,62 @@
+[
+  {
+    "case": "trivial",
+    "oracle_exit": 1,
+    "expectation_met": true
+  },
+  {
+    "case": "regression",
+    "oracle_exit": 1,
+    "expectation_met": true
+  },
+  {
+    "case": "vague-feature",
+    "oracle_exit": 1,
+    "expectation_met": true
+  },
+  {
+    "case": "weekend",
+    "oracle_exit": 1,
+    "expectation_met": true
+  },
+  {
+    "case": "legacy",
+    "oracle_exit": 0,
+    "expectation_met": true
+  },
+  {
+    "case": "dependency",
+    "oracle_exit": 1,
+    "expectation_met": true
+  },
+  {
+    "case": "api",
+    "oracle_exit": 1,
+    "expectation_met": true
+  },
+  {
+    "case": "tests",
+    "oracle_exit": 0,
+    "expectation_met": true
+  },
+  {
+    "case": "oss",
+    "oracle_exit": 1,
+    "expectation_met": true
+  },
+  {
+    "case": "business",
+    "oracle_exit": 1,
+    "expectation_met": true
+  },
+  {
+    "case": "no-op",
+    "oracle_exit": 0,
+    "expectation_met": true
+  },
+  {
+    "case": "unsafe-small",
+    "oracle_exit": 1,
+    "expectation_met": true
+  }
+]

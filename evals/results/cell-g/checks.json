@@ -1,0 +1,38 @@
+{
+  "case": "no-op",
+  "arm": "on",
+  "behavior_oracle": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-c",
+      "import sys; sys.path.insert(0, \".\")\n\nimport tempfile,pathlib\nfrom notes import load_notes,save_notes\nwith tempfile.TemporaryDirectory() as d:\n    p=pathlib.Path(d)/'n.json'; save_notes(p,['Żółć']); assert load_notes(p)==['Żółć']\n"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "seconds": 0.026
+  },
+  "own_tests": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-v"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "test_roundtrip (test_notes.NotesTests.test_roundtrip) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+    "seconds": 0.043,
+    "test_count": 1,
+    "status": "passed"
+  },
+  "changed_files": [],
+  "git_numstat": "",
+  "untracked_files": [],
+  "no_change_gate": true,
+  "mutation": {
+    "status": "not_implemented"
+  },
+  "notes": "Subjective dimensions require rubric review; test pass alone is not full correctness."
+}

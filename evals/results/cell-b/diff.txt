@@ -1,0 +1,8 @@
+diff --git a/retry.py b/retry.py
+index 61afa2b..fcc38d7 100644
+--- a/retry.py
++++ b/retry.py
+@@ -1,2 +1,2 @@
+ def should_retry(attempt, max_attempts):
+-    return attempt <= max_attempts
++    return attempt < max_attempts

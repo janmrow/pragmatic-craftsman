@@ -1,0 +1,5 @@
+Use $pragmatic-craftsman. Read the skill at /root/.codex/skills/remote-skills/pragmatic-craftsman/SKILL.md.
+
+Extend list_documents with an optional include_archived filter, default False. This is a reusable public library. Existing calls, including positional limit, must keep working. Preserve order, return shape, and input records.
+
+Work only in this repository, except reading the named skill if supplied. Do not inspect sibling runs or evaluator files. Complete the task and report the decisive evidence.

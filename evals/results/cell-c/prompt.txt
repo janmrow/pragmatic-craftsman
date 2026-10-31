@@ -1,0 +1,5 @@
+Use $pragmatic-craftsman. Read the skill at /root/.codex/skills/remote-skills/pragmatic-craftsman/SKILL.md.
+
+Fix invoice_total: a valid CSV invoice with a quoted comma in the description fails. Preserve Decimal results and the documented invalid-row behavior. Add a regression test.
+
+Work only in this repository, except reading the named skill if supplied. Do not inspect sibling runs or evaluator files. Complete the task and report the decisive evidence.

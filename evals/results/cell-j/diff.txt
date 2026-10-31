@@ -1,0 +1,90 @@
+diff --git a/README.md b/README.md
+index b05b064..a223cb5 100644
+--- a/README.md
++++ b/README.md
+@@ -1,5 +1,38 @@
+-# Local fixture
+-Python 3.10+, standard library only. No external services or production access.
+-Run existing tests with `python3 -m unittest discover -v` from this directory.
++# Local note-search experiment
+ 
+-This is a throwaway learning experiment, no real user data or external side effects.
++Python 3.10+, standard library only. Reads notes without modifying them; no network
++calls, installation, indexing, or configuration.
++
++```sh
++python3 search.py /path/to/notes "project idea"
++```
++
++Searches `.txt` files recursively for a literal, case-insensitive substring. Each
++matching line is printed once as `relative/path.txt:line-number:original text`, in
++path order, with line numbers starting at 1. Quote queries containing spaces.
++Notes are read as UTF-8; undecodable bytes are replaced. Matches are within one
++line, without ranking, fuzzy matching, or word-boundary rules.
++
++Exit status: 0 for matches, 1 for no matches, 2 for invalid arguments or a reported
++file-reading error. An empty query is rejected.
++
++## Try it for 30 minutes
++
++1. **0–5 minutes:** Pick a directory of your text notes and five real questions
++   you would normally answer by hunting through them. Include a known phrase,
++   a partial word, an ambiguous term, and something you think is absent.
++2. **5–20 minutes:** Run a query for each question. Record the query, relevant
++   hits, distracting hits, whether you found the needed note, and approximate time.
++   Try one revised query when the first result is poor.
++3. **20–30 minutes:** Compare with your normal way of finding notes. Keep the
++   script if it saves time on enough of your actual questions; otherwise delete
++   `search.py`. Note whether failures came from choosing words, too many hits,
++   encoding, or needing other file formats before adding features.
++
++## What was tried
++
++Synthetic notes checked nested paths, multiple matches, mixed case, partial-word
++matches, literal punctuation, preserved line text, and exclusion of non-`.txt`
++files. Empty/no-match queries and a missing directory were checked too.
++This establishes that the search mechanics work; usefulness on your own notes
++still requires the short trial above. No real notes were supplied or searched.
+
+Untracked: search.py
+#!/usr/bin/env python3
+"""A disposable, local substring search for UTF-8 text notes."""
+
+import argparse
+from pathlib import Path
+import sys
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("directory", type=Path)
+    parser.add_argument("query", help="literal substring (case-insensitive)")
+    args = parser.parse_args()
+    if not args.directory.is_dir():
+        parser.error(f"not a directory: {args.directory}")
+    if not args.query:
+        parser.error("query must not be empty")
+
+    needle = args.query.casefold()
+    matched = False
+    failed = False
+    for path in sorted(args.directory.rglob("*.txt")):
+        if not path.is_file():
+            continue
+        try:
+            with path.open(encoding="utf-8", errors="replace") as note:
+                for number, line in enumerate(note, start=1):
+                    if needle in line.casefold():
+                        relative_path = path.relative_to(args.directory).as_posix()
+                        text = line.rstrip("\r\n")
+                        print(f"{relative_path}:{number}:{text}")
+                        matched = True
+        except OSError as error:
+            print(f"search: {path}: {error}", file=sys.stderr)
+            failed = True
+    return 2 if failed else (0 if matched else 1)
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+

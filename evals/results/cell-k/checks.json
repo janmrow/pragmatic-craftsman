@@ -1,0 +1,42 @@
+{
+  "case": "api",
+  "arm": "on",
+  "behavior_oracle": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-c",
+      "import sys; sys.path.insert(0, \".\")\n\nfrom documents import list_documents\nrows=[{'id':1},{'id':2,'archived':True},{'id':3}]\nassert list_documents(rows)==[{'id':1},{'id':3}]\nassert list_documents(rows,1)==[{'id':1}]\nassert list_documents(rows,include_archived=True)==rows\nassert list_documents(rows,1,include_archived=True)==[{'id':1}]\nr=list_documents(rows); r[0]['id']=999; assert rows[0]['id']==1\n"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "seconds": 0.012
+  },
+  "own_tests": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-v"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "test_archived_records_are_excluded_by_default (test_documents.DocumentTests.test_archived_records_are_excluded_by_default) ... ok\ntest_default_limit_remains_twenty (test_documents.DocumentTests.test_default_limit_remains_twenty) ... ok\ntest_include_archived_preserves_order_and_positional_limit (test_documents.DocumentTests.test_include_archived_preserves_order_and_positional_limit) ... ok\ntest_limit_is_applied_after_filtering (test_documents.DocumentTests.test_limit_is_applied_after_filtering) ... ok\ntest_positional_limit (test_documents.DocumentTests.test_positional_limit) ... ok\ntest_returns_new_dictionaries_without_changing_input (test_documents.DocumentTests.test_returns_new_dictionaries_without_changing_input) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.000s\n\nOK\n",
+    "seconds": 0.034,
+    "test_count": 6,
+    "status": "passed"
+  },
+  "changed_files": [
+    "README.md",
+    "documents.py",
+    "test_documents.py"
+  ],
+  "git_numstat": "6\t0\tREADME.md\n7\t2\tdocuments.py\n52\t0\ttest_documents.py\n",
+  "untracked_files": [],
+  "no_change_gate": null,
+  "mutation": {
+    "status": "not_implemented"
+  },
+  "notes": "Subjective dimensions require rubric review; test pass alone is not full correctness."
+}

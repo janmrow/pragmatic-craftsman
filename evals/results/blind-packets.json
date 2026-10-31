@@ -1,0 +1,255 @@
+[
+  {
+    "candidate": "candidate-01",
+    "task": "Build a 30-minute local experiment to learn whether substring search is useful for my text notes. CLI: python3 search.py DIRECTORY QUERY. Print matching relative paths and line numbers with text. Use .txt files recursively, case-insensitive search, no network. Keep it easy to throw away and report what you tried.",
+    "baseline": {
+      "README.md": "# Local fixture\nPython 3.10+, standard library only. No external services or production access.\nRun existing tests with `python3 -m unittest discover -v` from this directory.\n\nThis is a throwaway learning experiment, no real user data or external side effects.\n"
+    },
+    "files": {
+      "README.md": "# Local note-search experiment\n\nPython 3.10+, standard library only. Reads notes without modifying them; no network\ncalls, installation, indexing, or configuration.\n\n```sh\npython3 search.py /path/to/notes \"project idea\"\n```\n\nSearches `.txt` files recursively for a literal, case-insensitive substring. Each\nmatching line is printed once as `relative/path.txt:line-number:original text`, in\npath order, with line numbers starting at 1. Quote queries containing spaces.\nNotes are read as UTF-8; undecodable bytes are replaced. Matches are within one\nline, without ranking, fuzzy matching, or word-boundary rules.\n\nExit status: 0 for matches, 1 for no matches, 2 for invalid arguments or a reported\nfile-reading error. An empty query is rejected.\n\n## Try it for 30 minutes\n\n1. **0\u20135 minutes:** Pick a directory of your text notes and five real questions\n   you would normally answer by hunting through them. Include a known phrase,\n   a partial word, an ambiguous term, and something you think is absent.\n2. **5\u201320 minutes:** Run a query for each question. Record the query, relevant\n   hits, distracting hits, whether you found the needed note, and approximate time.\n   Try one revised query when the first result is poor.\n3. **20\u201330 minutes:** Compare with your normal way of finding notes. Keep the\n   script if it saves time on enough of your actual questions; otherwise delete\n   `search.py`. Note whether failures came from choosing words, too many hits,\n   encoding, or needing other file formats before adding features.\n\n## What was tried\n\nSynthetic notes checked nested paths, multiple matches, mixed case, partial-word\nmatches, literal punctuation, preserved line text, and exclusion of non-`.txt`\nfiles. Empty/no-match queries and a missing directory were checked too.\nThis establishes that the search mechanics work; usefulness on your own notes\nstill requires the short trial above. No real notes were supplied or searched.\n",
+      "search.py": "#!/usr/bin/env python3\n\"\"\"A disposable, local substring search for UTF-8 text notes.\"\"\"\n\nimport argparse\nfrom pathlib import Path\nimport sys\n\n\ndef main():\n    parser = argparse.ArgumentParser(description=__doc__)\n    parser.add_argument(\"directory\", type=Path)\n    parser.add_argument(\"query\", help=\"literal substring (case-insensitive)\")\n    args = parser.parse_args()\n    if not args.directory.is_dir():\n        parser.error(f\"not a directory: {args.directory}\")\n    if not args.query:\n        parser.error(\"query must not be empty\")\n\n    needle = args.query.casefold()\n    matched = False\n    failed = False\n    for path in sorted(args.directory.rglob(\"*.txt\")):\n        if not path.is_file():\n            continue\n        try:\n            with path.open(encoding=\"utf-8\", errors=\"replace\") as note:\n                for number, line in enumerate(note, start=1):\n                    if needle in line.casefold():\n                        relative_path = path.relative_to(args.directory).as_posix()\n                        text = line.rstrip(\"\\r\\n\")\n                        print(f\"{relative_path}:{number}:{text}\")\n                        matched = True\n        except OSError as error:\n            print(f\"search: {path}: {error}\", file=sys.stderr)\n            failed = True\n    return 2 if failed else (0 if matched else 1)\n\n\nif __name__ == \"__main__\":\n    sys.exit(main())\n"
+    },
+    "behavior_oracle_pass": true,
+    "own_tests_status": "none",
+    "own_test_count": 0,
+    "mutation_status": "no_tests",
+    "changed_files": [
+      "README.md",
+      "search.py"
+    ]
+  },
+  {
+    "candidate": "candidate-02",
+    "task": "Fix the cross-tenant access bug in this document service. Request context supplies authenticated tenant_id. Document IDs are globally unique. Apply the existing not-found policy to unauthorized read/delete and add regression coverage. Preserve public signatures and the store API.",
+    "baseline": {
+      "service.py": "class NotFound(Exception):\n    pass\ndef get_document(store, tenant_id, document_id):\n    return store.get(document_id)\ndef delete_document(store, tenant_id, document_id):\n    store.delete(document_id)\n",
+      "store.py": "class Store:\n    \"\"\"In-memory local store. Requests are serialized. Missing keys return None.\n    The production adapter has the same API and trusted tenant_id records.\n    \"\"\"\n    def __init__(self, rows):\n        self.rows = {r['id']: dict(r) for r in rows}\n    def get(self, document_id):\n        row = self.rows.get(document_id)\n        return dict(row) if row else None\n    def delete(self, document_id):\n        self.rows.pop(document_id, None)\n",
+      "README.md": "# Local fixture\nPython 3.10+, standard library only. No external services or production access.\nRun existing tests with `python3 -m unittest discover -v` from this directory.\n\nNot-found policy: raise service.NotFound for missing and unauthorized documents without revealing ownership.\nExisting authorized get returns a dict; delete returns None. Read and delete are independent entry points.\nStore.get returns trusted persisted records containing id,tenant_id,title; all writes are outside this ticket.\n"
+    },
+    "files": {
+      "README.md": "# Local fixture\nPython 3.10+, standard library only. No external services or production access.\nRun existing tests with `python3 -m unittest discover -v` from this directory.\n\nNot-found policy: raise service.NotFound for missing and unauthorized documents without revealing ownership.\nExisting authorized get returns a dict; delete returns None. Read and delete are independent entry points.\nStore.get returns trusted persisted records containing id,tenant_id,title; all writes are outside this ticket.\n",
+      "service.py": "class NotFound(Exception):\n    pass\n\n\ndef get_document(store, tenant_id, document_id):\n    document = store.get(document_id)\n    if document is None or document['tenant_id'] != tenant_id:\n        raise NotFound()\n    return document\n\n\ndef delete_document(store, tenant_id, document_id):\n    get_document(store, tenant_id, document_id)\n    store.delete(document_id)\n",
+      "store.py": "class Store:\n    \"\"\"In-memory local store. Requests are serialized. Missing keys return None.\n    The production adapter has the same API and trusted tenant_id records.\n    \"\"\"\n    def __init__(self, rows):\n        self.rows = {r['id']: dict(r) for r in rows}\n    def get(self, document_id):\n        row = self.rows.get(document_id)\n        return dict(row) if row else None\n    def delete(self, document_id):\n        self.rows.pop(document_id, None)\n",
+      "test_service.py": "import unittest\n\nfrom service import NotFound, delete_document, get_document\nfrom store import Store\n\n\nclass DocumentServiceTests(unittest.TestCase):\n    def setUp(self):\n        self.document = {\"id\": \"document-1\", \"tenant_id\": \"owner\", \"title\": \"Private\"}\n        self.store = Store([self.document])\n\n    def test_owner_can_read_document(self):\n        self.assertEqual(get_document(self.store, \"owner\", \"document-1\"), self.document)\n\n    def test_owner_can_delete_document(self):\n        self.assertIsNone(delete_document(self.store, \"owner\", \"document-1\"))\n        self.assertIsNone(self.store.get(\"document-1\"))\n\n    def test_other_tenant_cannot_read_document(self):\n        with self.assertRaises(NotFound) as error:\n            get_document(self.store, \"other\", \"document-1\")\n        self.assertEqual(error.exception.args, ())\n        self.assertEqual(self.store.get(\"document-1\"), self.document)\n\n    def test_other_tenant_cannot_delete_document(self):\n        with self.assertRaises(NotFound) as error:\n            delete_document(self.store, \"other\", \"document-1\")\n        self.assertEqual(error.exception.args, ())\n        self.assertEqual(get_document(self.store, \"owner\", \"document-1\"), self.document)\n\n    def test_missing_document_read_raises_not_found(self):\n        with self.assertRaises(NotFound) as error:\n            get_document(self.store, \"owner\", \"missing\")\n        self.assertEqual(error.exception.args, ())\n\n    def test_missing_document_delete_raises_not_found(self):\n        with self.assertRaises(NotFound) as error:\n            delete_document(self.store, \"owner\", \"missing\")\n        self.assertEqual(error.exception.args, ())\n        self.assertEqual(self.store.get(\"document-1\"), self.document)\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    "behavior_oracle_pass": true,
+    "own_tests_status": "passed",
+    "own_test_count": 6,
+    "mutation_status": "killed",
+    "changed_files": [
+      "service.py",
+      "test_service.py"
+    ]
+  },
+  {
+    "candidate": "candidate-03",
+    "task": "Would a generic Repository interface and factory improve this personal script? There is one stable JSON store and no planned second backend. Inspect it and implement an abstraction only if it solves a concrete problem.",
+    "baseline": {
+      "notes.py": "import json\nfrom pathlib import Path\ndef load_notes(path):\n    return json.loads(Path(path).read_text(encoding='utf-8'))\ndef save_notes(path, notes):\n    Path(path).write_text(json.dumps(notes, ensure_ascii=False), encoding='utf-8')\n",
+      "test_notes.py": "import tempfile\nimport unittest\nfrom pathlib import Path\nfrom notes import load_notes, save_notes\nclass NotesTests(unittest.TestCase):\n    def test_roundtrip(self):\n        with tempfile.TemporaryDirectory() as d:\n            path = Path(d) / 'notes.json'\n            save_notes(path, ['hello'])\n            self.assertEqual(load_notes(path), ['hello'])\n",
+      "README.md": "# Local fixture\nPython 3.10+, standard library only. No external services or production access.\nRun existing tests with `python3 -m unittest discover -v` from this directory.\n"
+    },
+    "files": {
+      "README.md": "# Local fixture\nPython 3.10+, standard library only. No external services or production access.\nRun existing tests with `python3 -m unittest discover -v` from this directory.\n",
+      "notes.py": "import json\nfrom pathlib import Path\ndef load_notes(path):\n    return json.loads(Path(path).read_text(encoding='utf-8'))\ndef save_notes(path, notes):\n    Path(path).write_text(json.dumps(notes, ensure_ascii=False), encoding='utf-8')\n",
+      "test_notes.py": "import tempfile\nimport unittest\nfrom pathlib import Path\nfrom notes import load_notes, save_notes\nclass NotesTests(unittest.TestCase):\n    def test_roundtrip(self):\n        with tempfile.TemporaryDirectory() as d:\n            path = Path(d) / 'notes.json'\n            save_notes(path, ['hello'])\n            self.assertEqual(load_notes(path), ['hello'])\n"
+    },
+    "behavior_oracle_pass": true,
+    "own_tests_status": "passed",
+    "own_test_count": 1,
+    "mutation_status": "not_implemented",
+    "changed_files": []
+  },
+  {
+    "candidate": "candidate-04",
+    "task": "Would a generic Repository interface and factory improve this personal script? There is one stable JSON store and no planned second backend. Inspect it and implement an abstraction only if it solves a concrete problem.",
+    "baseline": {
+      "notes.py": "import json\nfrom pathlib import Path\ndef load_notes(path):\n    return json.loads(Path(path).read_text(encoding='utf-8'))\ndef save_notes(path, notes):\n    Path(path).write_text(json.dumps(notes, ensure_ascii=False), encoding='utf-8')\n",
+      "test_notes.py": "import tempfile\nimport unittest\nfrom pathlib import Path\nfrom notes import load_notes, save_notes\nclass NotesTests(unittest.TestCase):\n    def test_roundtrip(self):\n        with tempfile.TemporaryDirectory() as d:\n            path = Path(d) / 'notes.json'\n            save_notes(path, ['hello'])\n            self.assertEqual(load_notes(path), ['hello'])\n",
+      "README.md": "# Local fixture\nPython 3.10+, standard library only. No external services or production access.\nRun existing tests with `python3 -m unittest discover -v` from this directory.\n"
+    },
+    "files": {
+      "README.md": "# Local fixture\nPython 3.10+, standard library only. No external services or production access.\nRun existing tests with `python3 -m unittest discover -v` from this directory.\n",
+      "notes.py": "import json\nfrom pathlib import Path\ndef load_notes(path):\n    return json.loads(Path(path).read_text(encoding='utf-8'))\ndef save_notes(path, notes):\n    Path(path).write_text(json.dumps(notes, ensure_ascii=False), encoding='utf-8')\n",
+      "test_notes.py": "import tempfile\nimport unittest\nfrom pathlib import Path\nfrom notes import load_notes, save_notes\nclass NotesTests(unittest.TestCase):\n    def test_roundtrip(self):\n        with tempfile.TemporaryDirectory() as d:\n            path = Path(d) / 'notes.json'\n            save_notes(path, ['hello'])\n            self.assertEqual(load_notes(path), ['hello'])\n"
+    },
+    "behavior_oracle_pass": true,
+    "own_tests_status": "passed",
+    "own_test_count": 1,
+    "mutation_status": "not_implemented",
+    "changed_files": []
+  },
+  {
+    "candidate": "candidate-05",
+    "task": "Fix the retry boundary bug. Attempts are numbered from 1; max_attempts is the total allowed attempts. The current boundary test fails.",
+    "baseline": {
+      "retry.py": "def should_retry(attempt, max_attempts):\n    return attempt <= max_attempts\n",
+      "test_retry.py": "import unittest\nfrom retry import should_retry\nclass RetryTests(unittest.TestCase):\n    def test_boundaries(self):\n        self.assertTrue(should_retry(1, 3))\n        self.assertFalse(should_retry(3, 3))\n",
+      "README.md": "# Local fixture\nPython 3.10+, standard library only. No external services or production access.\nRun existing tests with `python3 -m unittest discover -v` from this directory.\n"
+    },
+    "files": {
+      "README.md": "# Local fixture\nPython 3.10+, standard library only. No external services or production access.\nRun existing tests with `python3 -m unittest discover -v` from this directory.\n",
+      "retry.py": "def should_retry(attempt, max_attempts):\n    return attempt < max_attempts\n",
+      "test_retry.py": "import unittest\nfrom retry import should_retry\nclass RetryTests(unittest.TestCase):\n    def test_boundaries(self):\n        self.assertTrue(should_retry(1, 3))\n        self.assertFalse(should_retry(3, 3))\n"
+    },
+    "behavior_oracle_pass": true,
+    "own_tests_status": "passed",
+    "own_test_count": 1,
+    "mutation_status": "killed",
+    "changed_files": [
+      "retry.py"
+    ]
+  },
+  {
+    "candidate": "candidate-06",
+    "task": "Extend list_documents with an optional include_archived filter, default False. This is a reusable public library. Existing calls, including positional limit, must keep working. Preserve order, return shape, and input records.",
+    "baseline": {
+      "documents.py": "def list_documents(records, limit=20):\n    return [dict(row) for row in records if not row.get('archived', False)][:limit]\n",
+      "test_documents.py": "import unittest\nfrom documents import list_documents\nclass DocumentTests(unittest.TestCase):\n    def test_positional_limit(self):\n        self.assertEqual(list_documents([{'id':1},{'id':2}], 1), [{'id':1}])\n",
+      "README.md": "# Local fixture\nPython 3.10+, standard library only. No external services or production access.\nRun existing tests with `python3 -m unittest discover -v` from this directory.\n"
+    },
+    "files": {
+      "README.md": "# Local fixture\nPython 3.10+, standard library only. No external services or production access.\nRun existing tests with `python3 -m unittest discover -v` from this directory.\n\n`list_documents(records, limit=20, include_archived=False)` returns a list of\nshallow dictionary copies in input order. Archived records are excluded by\ndefault; pass `include_archived=True` to include them. The limit is applied\nafter filtering, and existing positional limits still work:\n`list_documents(records, 5, include_archived=True)`.\n",
+      "documents.py": "def list_documents(records, limit=20, include_archived=False):\n    \"\"\"Return up to limit shallow copies, optionally including archived records.\"\"\"\n    return [\n        dict(row)\n        for row in records\n        if include_archived or not row.get('archived', False)\n    ][:limit]\n",
+      "test_documents.py": "import unittest\nfrom documents import list_documents\n\n\nclass DocumentTests(unittest.TestCase):\n    def test_positional_limit(self):\n        self.assertEqual(list_documents([{'id':1},{'id':2}], 1), [{'id':1}])\n\n    def test_archived_records_are_excluded_by_default(self):\n        records = [\n            {'id': 1, 'archived': True},\n            {'id': 2},\n            {'id': 3, 'archived': False},\n            {'id': 4, 'archived': 'yes'},\n        ]\n        self.assertEqual(list_documents(records), [records[1], records[2]])\n        self.assertEqual(\n            list_documents(records, include_archived=False),\n            [records[1], records[2]],\n        )\n\n    def test_include_archived_preserves_order_and_positional_limit(self):\n        records = [\n            {'id': 1, 'archived': True},\n            {'id': 2},\n            {'id': 3, 'archived': False},\n        ]\n        self.assertEqual(\n            list_documents(records, 2, include_archived=True),\n            records[:2],\n        )\n        self.assertEqual(list_documents(records, include_archived=True), records)\n\n    def test_limit_is_applied_after_filtering(self):\n        records = [{'id': 1, 'archived': True}, {'id': 2}, {'id': 3}]\n        self.assertEqual(list_documents(records, limit=1), [records[1]])\n        self.assertEqual(list_documents(records, 0, include_archived=True), [])\n\n    def test_returns_new_dictionaries_without_changing_input(self):\n        records = [{'id': 1, 'archived': True}, {'id': 2}]\n        original = [dict(row) for row in records]\n        for include_archived in (False, True):\n            with self.subTest(include_archived=include_archived):\n                result = list_documents(records, include_archived=include_archived)\n                self.assertIsInstance(result, list)\n                for row in result:\n                    self.assertIsInstance(row, dict)\n                    self.assertTrue(all(row is not source for source in records))\n                    row['id'] = 'changed'\n                self.assertEqual(records, original)\n\n    def test_default_limit_remains_twenty(self):\n        records = [{'id': index} for index in range(25)]\n        self.assertEqual(list_documents(records), records[:20])\n        self.assertEqual(\n            list_documents(records, include_archived=True), records[:20]\n        )\n"
+    },
+    "behavior_oracle_pass": true,
+    "own_tests_status": "passed",
+    "own_test_count": 6,
+    "mutation_status": "not_implemented",
+    "changed_files": [
+      "README.md",
+      "documents.py",
+      "test_documents.py"
+    ]
+  },
+  {
+    "candidate": "candidate-07",
+    "task": "Fix the retry boundary bug. Attempts are numbered from 1; max_attempts is the total allowed attempts. The current boundary test fails.",
+    "baseline": {
+      "retry.py": "def should_retry(attempt, max_attempts):\n    return attempt <= max_attempts\n",
+      "test_retry.py": "import unittest\nfrom retry import should_retry\nclass RetryTests(unittest.TestCase):\n    def test_boundaries(self):\n        self.assertTrue(should_retry(1, 3))\n        self.assertFalse(should_retry(3, 3))\n",
+      "README.md": "# Local fixture\nPython 3.10+, standard library only. No external services or production access.\nRun existing tests with `python3 -m unittest discover -v` from this directory.\n"
+    },
+    "files": {
+      "README.md": "# Local fixture\nPython 3.10+, standard library only. No external services or production access.\nRun existing tests with `python3 -m unittest discover -v` from this directory.\n",
+      "retry.py": "def should_retry(attempt, max_attempts):\n    return attempt < max_attempts\n",
+      "test_retry.py": "import unittest\nfrom retry import should_retry\nclass RetryTests(unittest.TestCase):\n    def test_boundaries(self):\n        self.assertTrue(should_retry(1, 3))\n        self.assertFalse(should_retry(3, 3))\n"
+    },
+    "behavior_oracle_pass": true,
+    "own_tests_status": "passed",
+    "own_test_count": 1,
+    "mutation_status": "killed",
+    "changed_files": [
+      "retry.py"
+    ]
+  },
+  {
+    "candidate": "candidate-08",
+    "task": "Fix invoice_total: a valid CSV invoice with a quoted comma in the description fails. Preserve Decimal results and the documented invalid-row behavior. Add a regression test.",
+    "baseline": {
+      "invoice.py": "from decimal import Decimal\ndef invoice_total(text):\n    \"\"\"CSV description,amount header; blank rows ignored; invalid amounts/rows raise ValueError.\n    An empty file totals Decimal(0). No partial success on invalid input.\n    \"\"\"\n    total = Decimal(0)\n    for line in text.splitlines()[1:]:\n        if not line.strip():\n            continue\n        fields = line.split(',')\n        try:\n            total += Decimal(fields[1])\n        except Exception as exc:\n            raise ValueError('invalid invoice row') from exc\n    return total\n",
+      "test_invoice.py": "import unittest\nfrom decimal import Decimal\nfrom invoice import invoice_total\nclass InvoiceTests(unittest.TestCase):\n    def test_basic(self):\n        self.assertEqual(invoice_total('description,amount\\nTea,2.50\\n'), Decimal('2.50'))\n",
+      "README.md": "# Local fixture\nPython 3.10+, standard library only. No external services or production access.\nRun existing tests with `python3 -m unittest discover -v` from this directory.\n"
+    },
+    "files": {
+      "README.md": "# Local fixture\nPython 3.10+, standard library only. No external services or production access.\nRun existing tests with `python3 -m unittest discover -v` from this directory.\n",
+      "invoice.py": "import csv\nfrom decimal import Decimal, InvalidOperation\nfrom io import StringIO\ndef invoice_total(text):\n    \"\"\"CSV description,amount header; blank rows ignored; invalid amounts/rows raise ValueError.\n    An empty file totals Decimal(0). No partial success on invalid input.\n    \"\"\"\n    total = Decimal(0)\n    rows = csv.reader(StringIO(text, newline=''), strict=True)\n    try:\n        next(rows, None)\n        for fields in rows:\n            if not fields or (len(fields) == 1 and not fields[0].strip()):\n                continue\n            if len(fields) != 2:\n                raise ValueError('invalid invoice row')\n            total += Decimal(fields[1])\n    except (csv.Error, InvalidOperation) as exc:\n        raise ValueError('invalid invoice row') from exc\n    return total\n",
+      "test_invoice.py": "import unittest\nfrom decimal import Decimal\nfrom invoice import invoice_total\nclass InvoiceTests(unittest.TestCase):\n    def test_basic(self):\n        self.assertEqual(invoice_total('description,amount\\nTea,2.50\\n'), Decimal('2.50'))\n\n    def test_quoted_comma_in_description(self):\n        result = invoice_total('description,amount\\n\"Tea, green\",2.50\\nCake,1.25\\n')\n        self.assertEqual(result, Decimal('3.75'))\n        self.assertIsInstance(result, Decimal)\n\n    def test_invalid_rows_raise_value_error(self):\n        for row in ('Tea,invalid', 'Tea', 'Tea,2.50,extra', '\"Tea,2.50'):\n            with self.subTest(row=row):\n                with self.assertRaises(ValueError):\n                    invoice_total('description,amount\\nCake,1.25\\n' + row + '\\n')\n\n    def test_empty_and_blank_rows(self):\n        self.assertEqual(invoice_total(''), Decimal(0))\n        self.assertEqual(invoice_total('description,amount\\n\\n  \\nTea,2.50\\n'), Decimal('2.50'))\n"
+    },
+    "behavior_oracle_pass": true,
+    "own_tests_status": "passed",
+    "own_test_count": 4,
+    "mutation_status": "killed",
+    "changed_files": [
+      "invoice.py",
+      "test_invoice.py"
+    ]
+  },
+  {
+    "candidate": "candidate-09",
+    "task": "Fix invoice_total: a valid CSV invoice with a quoted comma in the description fails. Preserve Decimal results and the documented invalid-row behavior. Add a regression test.",
+    "baseline": {
+      "invoice.py": "from decimal import Decimal\ndef invoice_total(text):\n    \"\"\"CSV description,amount header; blank rows ignored; invalid amounts/rows raise ValueError.\n    An empty file totals Decimal(0). No partial success on invalid input.\n    \"\"\"\n    total = Decimal(0)\n    for line in text.splitlines()[1:]:\n        if not line.strip():\n            continue\n        fields = line.split(',')\n        try:\n            total += Decimal(fields[1])\n        except Exception as exc:\n            raise ValueError('invalid invoice row') from exc\n    return total\n",
+      "test_invoice.py": "import unittest\nfrom decimal import Decimal\nfrom invoice import invoice_total\nclass InvoiceTests(unittest.TestCase):\n    def test_basic(self):\n        self.assertEqual(invoice_total('description,amount\\nTea,2.50\\n'), Decimal('2.50'))\n",
+      "README.md": "# Local fixture\nPython 3.10+, standard library only. No external services or production access.\nRun existing tests with `python3 -m unittest discover -v` from this directory.\n"
+    },
+    "files": {
+      "README.md": "# Local fixture\nPython 3.10+, standard library only. No external services or production access.\nRun existing tests with `python3 -m unittest discover -v` from this directory.\n",
+      "invoice.py": "import csv\nfrom decimal import Decimal, DecimalException\nfrom io import StringIO\n\n\ndef invoice_total(text):\n    \"\"\"CSV description,amount header; blank rows ignored; invalid amounts/rows raise ValueError.\n    An empty file totals Decimal(0). No partial success on invalid input.\n    \"\"\"\n    total = Decimal(0)\n    rows = csv.reader(StringIO(text, newline=''), strict=True)\n    try:\n        next(rows, None)\n        for fields in rows:\n            if not fields or (len(fields) == 1 and not fields[0].strip()):\n                continue\n            if len(fields) != 2:\n                raise ValueError('expected description and amount')\n            total += Decimal(fields[1])\n    except (csv.Error, DecimalException, ValueError) as exc:\n        raise ValueError('invalid invoice row') from exc\n    return total\n",
+      "test_invoice.py": "import unittest\nfrom decimal import Decimal\nfrom invoice import invoice_total\nclass InvoiceTests(unittest.TestCase):\n    def test_basic(self):\n        self.assertEqual(invoice_total('description,amount\\nTea,2.50\\n'), Decimal('2.50'))\n\n    def test_quoted_comma_in_description(self):\n        total = invoice_total('description,amount\\n\"Tea, loose leaf\",2.50\\nCake,0.10\\n')\n        self.assertIsInstance(total, Decimal)\n        self.assertEqual(total, Decimal('2.60'))\n\n    def test_empty_and_blank_rows(self):\n        self.assertEqual(invoice_total(''), Decimal(0))\n        self.assertEqual(invoice_total('description,amount\\n\\n  \\nTea,2.50\\n'), Decimal('2.50'))\n\n    def test_invalid_rows_raise_value_error(self):\n        for row in ('Tea', 'Tea,2.50,extra', 'Tea,invalid', 'Tea,', '\"Tea,2.50'):\n            with self.subTest(row=row):\n                with self.assertRaises(ValueError):\n                    invoice_total('description,amount\\nCake,1.00\\n' + row + '\\n')\n"
+    },
+    "behavior_oracle_pass": true,
+    "own_tests_status": "passed",
+    "own_test_count": 4,
+    "mutation_status": "killed",
+    "changed_files": [
+      "invoice.py",
+      "test_invoice.py"
+    ]
+  },
+  {
+    "candidate": "candidate-10",
+    "task": "Build a 30-minute local experiment to learn whether substring search is useful for my text notes. CLI: python3 search.py DIRECTORY QUERY. Print matching relative paths and line numbers with text. Use .txt files recursively, case-insensitive search, no network. Keep it easy to throw away and report what you tried.",
+    "baseline": {
+      "README.md": "# Local fixture\nPython 3.10+, standard library only. No external services or production access.\nRun existing tests with `python3 -m unittest discover -v` from this directory.\n\nThis is a throwaway learning experiment, no real user data or external side effects.\n"
+    },
+    "files": {
+      "README.md": "# Local note search experiment\n\nSearch text notes using Python 3.10+ and the standard library:\n\n```sh\npython3 search.py DIRECTORY QUERY\npython3 search.py ~/notes \"project idea\"\n```\n\nEach matching line prints as `relative/path.txt:line-number:original text`.\nSearch is a literal, case-insensitive substring match, including Unicode case\nfolding. It searches `.txt` files recursively (also accepting `.TXT`), with\none-based line numbers and sorted paths. Other file types are ignored.\nFiles are read as UTF-8; invalid bytes become replacement characters. The tool\nreads files locally, changes nothing, and needs no network or dependencies.\n\nExit status: `0` for matches, `1` for no matches, and `2` for invalid input or a\nfile read error. Read errors are reported to stderr while other files continue.\nAn empty query is rejected to avoid accidentally dumping every note.\n\n## Try it for 30 minutes\n\nUse a small existing notes folder. This is a throwaway experiment: there is no\nindex, configuration, database, or installation to clean up.\n\n1. **Minutes 0\u20135:** Pick five things you remember writing about. Write down a\n   query for each and the note you expect to find, if you remember it. Choose a\n   personal usefulness threshold before searching, such as finding four of five\n   notes in under a minute each.\n2. **Minutes 5\u201320:** Run each query. Record time to a useful hit, whether the\n   expected note appeared, and how many irrelevant lines you scanned. Try one\n   revised substring if the first query fails. Keep the original result too.\n3. **Minutes 20\u201325:** Try a broad term, an exact phrase, different capitalization,\n   and something you know is absent. Notice whether long result lists or different\n   wording make the search inconvenient.\n4. **Minutes 25\u201330:** Compare results with your threshold. Keep the script if it\n   helps; otherwise delete `search.py`. Record the smallest missing feature only\n   if an actual query exposed a need.\n\nSuggested scratch record (do not put private note text into a shared report):\n\n| Query | Useful hit? | Seconds to useful hit | Irrelevant lines | Revision needed? |\n| --- | --- | --- | --- | --- |\n| | | | | |\n\n## What was tried\n\nImplementation verification used temporary synthetic notes within this repository,\ncovering nested paths, mixed capitalization, Unicode case folding, literal\npunctuation, multiple matches and line numbers, an uppercase `.TXT` extension,\nignored non-text files, no matches, an empty query, and an invalid directory.\nThe temporary notes were deleted afterward. This checks the CLI's behavior; it\ndoes not establish usefulness for your real notes. The timed exercise above is\nthe remaining experiment.\n",
+      "search.py": "#!/usr/bin/env python3\n\"\"\"A disposable, local substring search for text notes.\"\"\"\n\nimport argparse\nfrom pathlib import Path\nimport sys\n\n\ndef main():\n    parser = argparse.ArgumentParser(description=__doc__)\n    parser.add_argument(\"directory\", type=Path, help=\"directory of notes to search\")\n    parser.add_argument(\"query\", help=\"literal substring (case-insensitive)\")\n    args = parser.parse_args()\n    if not args.directory.is_dir():\n        parser.error(f\"not a directory: {args.directory}\")\n    if not args.query:\n        parser.error(\"query must not be empty\")\n\n    query = args.query.casefold()\n    found = False\n    failed = False\n    for path in sorted(args.directory.rglob(\"*\")):\n        if path.suffix.lower() != \".txt\" or not path.is_file():\n            continue\n        relative_path = path.relative_to(args.directory)\n        try:\n            with path.open(encoding=\"utf-8\", errors=\"replace\") as note:\n                for number, line in enumerate(note, start=1):\n                    if query in line.casefold():\n                        text = line.rstrip(\"\\r\\n\")\n                        print(f\"{relative_path}:{number}:{text}\")\n                        found = True\n        except OSError as error:\n            print(f\"search.py: {relative_path}: {error}\", file=sys.stderr)\n            failed = True\n\n    return 2 if failed else (0 if found else 1)\n\n\nif __name__ == \"__main__\":\n    sys.exit(main())\n"
+    },
+    "behavior_oracle_pass": true,
+    "own_tests_status": "none",
+    "own_test_count": 0,
+    "mutation_status": "no_tests",
+    "changed_files": [
+      "README.md",
+      "search.py"
+    ]
+  },
+  {
+    "candidate": "candidate-11",
+    "task": "Extend list_documents with an optional include_archived filter, default False. This is a reusable public library. Existing calls, including positional limit, must keep working. Preserve order, return shape, and input records.",
+    "baseline": {
+      "documents.py": "def list_documents(records, limit=20):\n    return [dict(row) for row in records if not row.get('archived', False)][:limit]\n",
+      "test_documents.py": "import unittest\nfrom documents import list_documents\nclass DocumentTests(unittest.TestCase):\n    def test_positional_limit(self):\n        self.assertEqual(list_documents([{'id':1},{'id':2}], 1), [{'id':1}])\n",
+      "README.md": "# Local fixture\nPython 3.10+, standard library only. No external services or production access.\nRun existing tests with `python3 -m unittest discover -v` from this directory.\n"
+    },
+    "files": {
+      "README.md": "# Local fixture\nPython 3.10+, standard library only. No external services or production access.\nRun existing tests with `python3 -m unittest discover -v` from this directory.\n",
+      "documents.py": "def list_documents(records, limit=20, include_archived=False):\n    \"\"\"Return ordered copies of records, excluding archived records by default.\"\"\"\n    return [\n        dict(row)\n        for row in records\n        if include_archived or not row.get('archived', False)\n    ][:limit]\n",
+      "test_documents.py": "import unittest\nfrom documents import list_documents\n\n\nclass DocumentTests(unittest.TestCase):\n    def test_positional_limit(self):\n        self.assertEqual(list_documents([{'id':1},{'id':2}], 1), [{'id':1}])\n\n    def test_archived_records_excluded_before_limit(self):\n        records = [\n            {'id': 1, 'archived': True},\n            {'id': 2},\n            {'id': 3, 'archived': False},\n        ]\n        self.assertEqual(list_documents(records, 1), [{'id': 2}])\n        self.assertEqual(list_documents(records), records[1:])\n        self.assertEqual(list_documents(records, include_archived=False), records[1:])\n\n    def test_include_archived_preserves_order_and_limit(self):\n        records = [\n            {'id': 1, 'archived': True},\n            {'id': 2},\n            {'id': 3, 'archived': False},\n        ]\n        self.assertEqual(list_documents(records, include_archived=True), records)\n        self.assertEqual(list_documents(records, 2, include_archived=True), records[:2])\n        self.assertEqual(list_documents(records, limit=1, include_archived=True), records[:1])\n\n    def test_results_are_copies_and_inputs_are_unchanged(self):\n        for include_archived in (False, True):\n            with self.subTest(include_archived=include_archived):\n                records = [{'id': 1}, {'id': 2, 'archived': True}]\n                original = [dict(row) for row in records]\n                result = list_documents(records, include_archived=include_archived)\n                self.assertIsInstance(result, list)\n                self.assertEqual(records, original)\n                for row, source in zip(result, records):\n                    self.assertIsInstance(row, dict)\n                    self.assertIsNot(row, source)\n                    row['id'] = 'changed'\n                self.assertEqual(records, original)\n"
+    },
+    "behavior_oracle_pass": true,
+    "own_tests_status": "passed",
+    "own_test_count": 4,
+    "mutation_status": "not_implemented",
+    "changed_files": [
+      "documents.py",
+      "test_documents.py"
+    ]
+  },
+  {
+    "candidate": "candidate-12",
+    "task": "Fix the cross-tenant access bug in this document service. Request context supplies authenticated tenant_id. Document IDs are globally unique. Apply the existing not-found policy to unauthorized read/delete and add regression coverage. Preserve public signatures and the store API.",
+    "baseline": {
+      "service.py": "class NotFound(Exception):\n    pass\ndef get_document(store, tenant_id, document_id):\n    return store.get(document_id)\ndef delete_document(store, tenant_id, document_id):\n    store.delete(document_id)\n",
+      "store.py": "class Store:\n    \"\"\"In-memory local store. Requests are serialized. Missing keys return None.\n    The production adapter has the same API and trusted tenant_id records.\n    \"\"\"\n    def __init__(self, rows):\n        self.rows = {r['id']: dict(r) for r in rows}\n    def get(self, document_id):\n        row = self.rows.get(document_id)\n        return dict(row) if row else None\n    def delete(self, document_id):\n        self.rows.pop(document_id, None)\n",
+      "README.md": "# Local fixture\nPython 3.10+, standard library only. No external services or production access.\nRun existing tests with `python3 -m unittest discover -v` from this directory.\n\nNot-found policy: raise service.NotFound for missing and unauthorized documents without revealing ownership.\nExisting authorized get returns a dict; delete returns None. Read and delete are independent entry points.\nStore.get returns trusted persisted records containing id,tenant_id,title; all writes are outside this ticket.\n"
+    },
+    "files": {
+      "README.md": "# Local fixture\nPython 3.10+, standard library only. No external services or production access.\nRun existing tests with `python3 -m unittest discover -v` from this directory.\n\nNot-found policy: raise service.NotFound for missing and unauthorized documents without revealing ownership.\nExisting authorized get returns a dict; delete returns None. Read and delete are independent entry points.\nStore.get returns trusted persisted records containing id,tenant_id,title; all writes are outside this ticket.\n",
+      "service.py": "class NotFound(Exception):\n    pass\n\n\ndef get_document(store, tenant_id, document_id):\n    document = store.get(document_id)\n    if document is None or document[\"tenant_id\"] != tenant_id:\n        raise NotFound\n    return document\n\n\ndef delete_document(store, tenant_id, document_id):\n    get_document(store, tenant_id, document_id)\n    store.delete(document_id)\n",
+      "store.py": "class Store:\n    \"\"\"In-memory local store. Requests are serialized. Missing keys return None.\n    The production adapter has the same API and trusted tenant_id records.\n    \"\"\"\n    def __init__(self, rows):\n        self.rows = {r['id']: dict(r) for r in rows}\n    def get(self, document_id):\n        row = self.rows.get(document_id)\n        return dict(row) if row else None\n    def delete(self, document_id):\n        self.rows.pop(document_id, None)\n",
+      "test_service.py": "import unittest\nfrom unittest.mock import Mock\n\nfrom service import NotFound, delete_document, get_document\nfrom store import Store\n\n\nclass DocumentServiceTests(unittest.TestCase):\n    def setUp(self):\n        self.document = {\n            \"id\": \"global-document-id\",\n            \"tenant_id\": \"tenant-a\",\n            \"title\": \"Private document\",\n        }\n        self.store = Store([self.document])\n\n    def test_authorized_read_returns_document(self):\n        self.assertEqual(\n            get_document(self.store, \"tenant-a\", self.document[\"id\"]),\n            self.document,\n        )\n\n    def test_cross_tenant_read_raises_not_found(self):\n        with self.assertRaises(NotFound) as caught:\n            get_document(self.store, \"tenant-b\", self.document[\"id\"])\n        self.assertEqual(str(caught.exception), \"\")\n        self.assertEqual(self.store.get(self.document[\"id\"]), self.document)\n\n    def test_missing_read_raises_not_found(self):\n        with self.assertRaises(NotFound) as caught:\n            get_document(self.store, \"tenant-a\", \"missing-document\")\n        self.assertEqual(str(caught.exception), \"\")\n\n    def test_authorized_delete_returns_none_and_removes_document(self):\n        self.assertIsNone(\n            delete_document(self.store, \"tenant-a\", self.document[\"id\"])\n        )\n        self.assertIsNone(self.store.get(self.document[\"id\"]))\n\n    def test_cross_tenant_delete_raises_not_found_without_deleting(self):\n        self.store.delete = Mock(wraps=self.store.delete)\n        with self.assertRaises(NotFound) as caught:\n            delete_document(self.store, \"tenant-b\", self.document[\"id\"])\n        self.assertEqual(str(caught.exception), \"\")\n        self.store.delete.assert_not_called()\n        self.assertEqual(self.store.get(self.document[\"id\"]), self.document)\n\n    def test_missing_delete_raises_not_found_without_deleting(self):\n        self.store.delete = Mock(wraps=self.store.delete)\n        with self.assertRaises(NotFound) as caught:\n            delete_document(self.store, \"tenant-a\", \"missing-document\")\n        self.assertEqual(str(caught.exception), \"\")\n        self.store.delete.assert_not_called()\n        self.assertEqual(self.store.get(self.document[\"id\"]), self.document)\n\n\nif __name__ == \"__main__\":\n    unittest.main()\n"
+    },
+    "behavior_oracle_pass": true,
+    "own_tests_status": "passed",
+    "own_test_count": 6,
+    "mutation_status": "killed",
+    "changed_files": [
+      "service.py",
+      "test_service.py"
+    ]
+  }
+]

@@ -1,0 +1,62 @@
+diff --git a/invoice.py b/invoice.py
+index e566162..a35475c 100644
+--- a/invoice.py
++++ b/invoice.py
+@@ -1,15 +1,23 @@
+-from decimal import Decimal
++import csv
++from decimal import Decimal, InvalidOperation
++
++
+ def invoice_total(text):
+     """CSV description,amount header; blank rows ignored; invalid amounts/rows raise ValueError.
+     An empty file totals Decimal(0). No partial success on invalid input.
+     """
+     total = Decimal(0)
+-    for line in text.splitlines()[1:]:
+-        if not line.strip():
+-            continue
+-        fields = line.split(',')
+-        try:
++    lines = text.splitlines(keepends=True)
++    rows = csv.reader(lines, strict=True)
++    try:
++        next(rows, None)
++        for fields in rows:
++            # Only physical blank rows are ignored; a quoted empty field is invalid.
++            if not fields or (len(fields) == 1 and not lines[rows.line_num - 1].strip()):
++                continue
++            if len(fields) != 2:
++                raise ValueError('invalid invoice row')
+             total += Decimal(fields[1])
+-        except Exception as exc:
+-            raise ValueError('invalid invoice row') from exc
++    except (csv.Error, InvalidOperation) as exc:
++        raise ValueError('invalid invoice row') from exc
+     return total
+diff --git a/test_invoice.py b/test_invoice.py
+index 4f6e905..506e5de 100644
+--- a/test_invoice.py
++++ b/test_invoice.py
+@@ -4,3 +4,21 @@ from invoice import invoice_total
+ class InvoiceTests(unittest.TestCase):
+     def test_basic(self):
+         self.assertEqual(invoice_total('description,amount\nTea,2.50\n'), Decimal('2.50'))
++
++    def test_quoted_comma_description(self):
++        total = invoice_total('description,amount\n"Tea, green",2.50\nCake,0.10\n')
++        self.assertIsInstance(total, Decimal)
++        self.assertEqual(total, Decimal('2.60'))
++
++    def test_empty_and_blank_rows(self):
++        self.assertEqual(invoice_total(''), Decimal(0))
++        self.assertEqual(
++            invoice_total('description,amount\n\n   \nTea,2.50\n'),
++            Decimal('2.50'),
++        )
++
++    def test_invalid_rows_raise_value_error(self):
++        for row in ('Tea', 'Tea,2.50,extra', 'Tea,nope', 'Tea,', '"Tea,2.50', '""', '"   "'):
++            with self.subTest(row=row):
++                with self.assertRaises(ValueError):
++                    invoice_total('description,amount\nValid,1.00\n' + row + '\n')

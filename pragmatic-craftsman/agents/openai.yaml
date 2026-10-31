@@ -1,0 +1,6 @@
+interface:
+  display_name: "Pragmatic Craftsman"
+  short_description: "Engineering judgment for building and changing code"
+  default_prompt: "Use $pragmatic-craftsman to implement this change clearly, completely, and with proportionate effort."
+policy:
+  allow_implicit_invocation: true

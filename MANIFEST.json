@@ -1,0 +1,36 @@
+{
+  "name": "pragmatic-craftsman",
+  "version": "0.2.0",
+  "date": "2026-11-01",
+  "status": "consolidated single-file skill for daily use; empirical superiority not claimed",
+  "license": "MIT",
+  "skill_files": {
+    "SKILL.md": {
+      "sha256": "67b5c6dfb14b47215df2d40cb8cbcb14c07ca482378ea7f8522bf99156ee8b69",
+      "bytes": 4601,
+      "words_whitespace": 627,
+      "words_markdown_body": 577,
+      "lines": 48
+    },
+    "agents/openai.yaml": {
+      "sha256": "c817f1f920275c3712e23fb497724f280e2b8b2de3630fe637045b48d13fc900",
+      "bytes": 288,
+      "words_whitespace": 28,
+      "lines": 6
+    }
+  },
+  "historical_v0_1_eval": {
+    "harness_python": "3.12.14",
+    "agent_trials": 14,
+    "first_pilot_final_oracle": {
+      "off": "6/6",
+      "on": "5/6"
+    },
+    "targeted_repeat_final_oracle": {
+      "off": "0/1",
+      "on": "0/1"
+    },
+    "native_cli_runtime_tested": false,
+    "raw_agent_action_traces_available": false
+  }
+}

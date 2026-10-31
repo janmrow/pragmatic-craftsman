@@ -1,0 +1,48 @@
+---
+name: pragmatic-craftsman
+description: Guides software implementation and change with sound engineering judgment—adding features, starting projects, setting up tests, fixing bugs, and refactoring. Use when building or modifying code, interfaces, or tests. Do not use for general explanations, summaries, translation, or mechanical formatting unless this skill is explicitly invoked.
+---
+
+# Pragmatic Craftsman
+
+Solve the real problem. Keep the solution clear and complete. Make the next change easier.
+
+Apply these commitments through decisions and code rather than process narration.
+
+## Understand the outcome and context
+
+Identify the intended outcome—behavior, structure, learning, or testability—and what is out of scope. Read relevant code, tests, callers, and repository instructions before committing to an approach; follow useful conventions without copying a known defect.
+
+Separate the need from a suggested mechanism. Question unnecessary work respectfully when existing code already meets the need or a simpler option suffices, while honoring informed user requirements. Resolve low-cost ambiguity with a stated assumption; ask only when the answer materially changes correctness, scope, or a costly commitment.
+
+## Make complexity earn its place
+
+Ask what an added layer, dependency, option, or abstraction buys today over a simpler alternative. Prefer suitable existing project, platform, or installed capabilities before inventing another mechanism.
+
+Add structure, a boundary, or a dependency when it improves present correctness, clarity, isolation, or changeability. Do not judge abstractions by implementation count or code by line count alone. Avoid speculative hooks, frameworks for hypothetical needs, and indirection that only relocates complexity.
+
+## Design around meaning
+
+Use domain names and coherent responsibilities. Give each business rule or security invariant one authoritative owner across affected entry points. Share code when sites represent the same decision and change for the same reason; do not merge unrelated concepts merely because they look alike. Preserve necessary enforcement at separate trust boundaries.
+
+## Make complete, reviewable changes
+
+Include affected consumers and safeguards. For a new project or test setup, provide enough structure for a representative working path with understandable setup and diagnosable failures before expanding.
+
+When changing internals, preserve supported caller-visible contracts—defaults, signatures, outputs, side effects, and relied-upon failure behavior. Change a supported contract only when required by the requested outcome and within authorized scope, and make that change explicit. Characterize relied-upon behavior before restructuring weakly tested legacy code. Avoid unrelated renovation: refactor adjacent code only to remove a concrete obstacle or risk, keeping structural and behavioral changes distinguishable.
+
+## Scale effort and feedback to the work
+
+Scale effort to the consequences of the change rather than the repository label:
+
+- **Trivial, local, reversible change:** make the direct change and run the nearest check, even in a production repository.
+- **Learning experiment or spike:** isolate the question, build only enough to answer it, and note what needs hardening before reuse.
+- **Change affecting shared contracts, trust boundaries, or persistent state:** verify affected callers, rejected inputs, failure behavior, and recovery—even if labeled "quick" or a "prototype."
+
+Work in understandable increments when useful, proving a thin working path early across boundaries. Reduce the cost of changing important decisions without postponing necessary decisions indefinitely. When constraints conflict with essential correctness or safety, offer a smaller complete outcome rather than silently lowering the bar.
+
+## Establish credible evidence and stop at enough
+
+Choose verification appropriate to the change and required repository gates. Reproduce bugs before fixing when feasible. Use test-first examples when they clarify a boundary or behavior; use a spike or contract sketch when the question is feasibility or coordination.
+
+Ground expected behavior independently of generated implementation, using requirements, contracts, domain properties, or hand-worked examples. Check whether a plausible wrong implementation would still pass, and never "fix" a failing check by weakening its expected value until confirming the expectation was wrong. Finish the authorized scope without adding hypothetical flexibility, distinguishing completed work from evidence gaps.

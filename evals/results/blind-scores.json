@@ -1,0 +1,269 @@
+{
+  "scale": {
+    "0": "harmful or missing",
+    "1": "materially flawed",
+    "2": "adequate",
+    "3": "strong",
+    "null": "genuinely unobserved"
+  },
+  "basis": "Blind review of packets.json only, including tasks, baseline/final files and supplied independently observed checks. No other paths, candidate code, experimental-arm information or author histories were inspected.",
+  "limitations": [
+    "Efficiency is null for every candidate: cost and tool traces are unavailable, and code length is not evidence of time or effort.",
+    "Verification quality scores reflect available evidence, not inferred execution chronology. Supplied pass/killed fields do not prove coverage beyond the included tests and stated oracle result.",
+    "For candidates with no retained tests, test value is null rather than automatically penalizing a proportionate throwaway experiment; no author smoke log was supplied.",
+    "For unchanged candidates, the artifact decision can be assessed, but any accompanying prose recommendation or inspection rationale is absent."
+  ],
+  "candidates": [
+    {
+      "candidate": "candidate-01",
+      "scores": {
+        "correctness": 3,
+        "scope_discipline": 3,
+        "simplicity": 3,
+        "completeness": 3,
+        "verification_quality": 2,
+        "test_value": null,
+        "semantic_quality": 3,
+        "reviewability": 3,
+        "maintainability": 3,
+        "efficiency": null
+      },
+      "evidence": {
+        "implementation": "Small standard-library CLI meets recursive .txt, literal casefold matching, relative paths, one-based line numbers and local-only requirements; supplied behavior oracle passes.",
+        "scope_and_semantics": "No index, dependency or framework; README supplies a concrete 30-minute usefulness trial and clearly separates mechanics from usefulness on real notes.",
+        "verification": "No authored tests or author smoke log are included. README claims synthetic trials, but those claims are not independently documented in this packet; the supplied oracle is positive evidence only for its observed checks.",
+        "test_value": "Unobserved: no retained tests or author runtime transcript to assess. This is not treated as a mandatory test-suite omission for a throwaway experiment."
+      }
+    },
+    {
+      "candidate": "candidate-02",
+      "scores": {
+        "correctness": 3,
+        "scope_discipline": 3,
+        "simplicity": 3,
+        "completeness": 3,
+        "verification_quality": 3,
+        "test_value": 3,
+        "semantic_quality": 3,
+        "reviewability": 3,
+        "maintainability": 3,
+        "efficiency": null
+      },
+      "evidence": {
+        "implementation": "Both entry points enforce persisted tenant ownership through get_document; missing and unauthorized requests raise an empty NotFound, preserving signatures, authorized results and store API.",
+        "tests": "Six passing tests cover authorized read/delete, unauthorized read/delete, missing read/delete and preservation of stored records after denial; supplied oracle passes and supplied mutation was killed.",
+        "scope_and_review": "Two focused changed files; shared authorization avoids diverging read/delete policies without adding unnecessary layers."
+      }
+    },
+    {
+      "candidate": "candidate-03",
+      "scores": {
+        "correctness": 3,
+        "scope_discipline": 3,
+        "simplicity": 3,
+        "completeness": 3,
+        "verification_quality": 2,
+        "test_value": 3,
+        "semantic_quality": null,
+        "reviewability": 3,
+        "maintainability": 3,
+        "efficiency": null
+      },
+      "evidence": {
+        "implementation": "All files are unchanged. Retaining the two direct JSON functions is appropriate to the stated single stable backend and conditional request to add abstraction only for a concrete need.",
+        "tests": "Existing roundtrip test passes and supplied behavior oracle passes. No behavioral change requires new regression tests; mutation testing was not implemented.",
+        "limits": "No authored explanation of the inspection or recommendation is present, so its semantic quality cannot be assessed. No-op artifacts are not penalized merely for having no diff."
+      }
+    },
+    {
+      "candidate": "candidate-04",
+      "scores": {
+        "correctness": 3,
+        "scope_discipline": 3,
+        "simplicity": 3,
+        "completeness": 3,
+        "verification_quality": 2,
+        "test_value": 3,
+        "semantic_quality": null,
+        "reviewability": 3,
+        "maintainability": 3,
+        "efficiency": null
+      },
+      "evidence": {
+        "implementation": "All files are unchanged. Retaining the two direct JSON functions is appropriate to the stated single stable backend and conditional request to add abstraction only for a concrete need.",
+        "tests": "Existing roundtrip test passes and supplied behavior oracle passes. No behavioral change requires new regression tests; mutation testing was not implemented.",
+        "limits": "No authored explanation of the inspection or recommendation is present, so its semantic quality cannot be assessed. Artifacts are identical to candidate-03 and receive identical scores."
+      }
+    },
+    {
+      "candidate": "candidate-05",
+      "scores": {
+        "correctness": 3,
+        "scope_discipline": 3,
+        "simplicity": 3,
+        "completeness": 3,
+        "verification_quality": 3,
+        "test_value": 3,
+        "semantic_quality": 3,
+        "reviewability": 3,
+        "maintainability": 3,
+        "efficiency": null
+      },
+      "evidence": {
+        "implementation": "Changes only <= to <, exactly enforcing no retry once the total allowed attempt count is reached.",
+        "tests": "Existing boundary test covers retry before the limit and no retry at the limit, passes after the fix, and the supplied mutation was killed; supplied behavior oracle passes.",
+        "scope_and_review": "A one-line correction fully addresses the specified bug; duplicating the already useful regression test is unnecessary."
+      }
+    },
+    {
+      "candidate": "candidate-06",
+      "scores": {
+        "correctness": 3,
+        "scope_discipline": 3,
+        "simplicity": 3,
+        "completeness": 3,
+        "verification_quality": 3,
+        "test_value": 3,
+        "semantic_quality": 3,
+        "reviewability": 3,
+        "maintainability": 3,
+        "efficiency": null
+      },
+      "evidence": {
+        "implementation": "Appends include_archived=False after limit, preserving existing positional calls; uses the original filtering, shallow-copy, order and slicing semantics.",
+        "tests": "Six passing tests cover default/explicit exclusion, inclusion, positional limit, order, filter-before-limit, zero limit, unchanged default of twenty, dictionary copies and unchanged inputs. Supplied behavior oracle passes; no mutation check was implemented.",
+        "documentation": "README documents signature, shallow copies, default exclusion, filtering before limit and a compatible positional-limit example. Tests and docs are proportionate to a reusable public API."
+      }
+    },
+    {
+      "candidate": "candidate-07",
+      "scores": {
+        "correctness": 3,
+        "scope_discipline": 3,
+        "simplicity": 3,
+        "completeness": 3,
+        "verification_quality": 3,
+        "test_value": 3,
+        "semantic_quality": 3,
+        "reviewability": 3,
+        "maintainability": 3,
+        "efficiency": null
+      },
+      "evidence": {
+        "implementation": "Changes only <= to <, exactly enforcing no retry once the total allowed attempt count is reached.",
+        "tests": "Existing boundary test covers retry before the limit and no retry at the limit, passes after the fix, and the supplied mutation was killed; supplied behavior oracle passes.",
+        "scope_and_review": "Artifacts are identical to candidate-05 and receive identical scores; a one-line correction fully addresses the specified bug."
+      }
+    },
+    {
+      "candidate": "candidate-08",
+      "scores": {
+        "correctness": 1,
+        "scope_discipline": 3,
+        "simplicity": 3,
+        "completeness": 1,
+        "verification_quality": 2,
+        "test_value": 2,
+        "semantic_quality": 2,
+        "reviewability": 3,
+        "maintainability": 2,
+        "efficiency": null
+      },
+      "evidence": {
+        "implementation": "csv.reader with strict parsing handles quoted commas correctly, preserves Decimal totals and rejects malformed field counts while ignoring blank rows.",
+        "contract_gap": "Material correctness/completeness gap: invoice_total('description,amount\\nTea,1e1000000\\n') raises decimal.Overflow under the default decimal context rather than ValueError. The original broad handler normalized this arithmetic failure to ValueError; the documented contract requires invalid amounts/rows to raise ValueError with no partial success. The parent reviewer independently confirmed this added oracle input after the initial supplied oracle passed. Candidate-08 catches only InvalidOperation and csv.Error; candidate-09 catches DecimalException.",
+        "tests": "Four passing tests cover the quoted-comma regression, Decimal type/total, blank/empty input, malformed rows and invalid numeric text; supplied oracle passes and supplied mutation was killed. Those checks do not establish preservation of other decimal arithmetic errors.",
+        "scope_and_review": "Focused standard-library parser replacement is easy to review; exception coverage is the material distinction from candidate-09."
+      }
+    },
+    {
+      "candidate": "candidate-09",
+      "scores": {
+        "correctness": 3,
+        "scope_discipline": 3,
+        "simplicity": 3,
+        "completeness": 3,
+        "verification_quality": 3,
+        "test_value": 3,
+        "semantic_quality": 3,
+        "reviewability": 3,
+        "maintainability": 3,
+        "efficiency": null
+      },
+      "evidence": {
+        "implementation": "Uses strict csv.reader for CSV quoting, checks two fields, ignores blank rows, keeps Decimal accumulation and converts CSV and DecimalException failures to ValueError.",
+        "tests": "Four passing tests cover quoted-comma totals and Decimal type, empty/blank input, missing/extra fields, invalid/empty amounts and malformed quotes; supplied oracle passes and supplied mutation was killed.",
+        "scope_and_semantics": "Focused standard-library change preserves the documented error category more broadly than candidate-08 by catching DecimalException rather than only InvalidOperation."
+      }
+    },
+    {
+      "candidate": "candidate-10",
+      "scores": {
+        "correctness": 3,
+        "scope_discipline": 3,
+        "simplicity": 3,
+        "completeness": 3,
+        "verification_quality": 2,
+        "test_value": null,
+        "semantic_quality": 3,
+        "reviewability": 3,
+        "maintainability": 3,
+        "efficiency": null
+      },
+      "evidence": {
+        "implementation": "Small standard-library CLI meets recursive text search, casefold matching, relative paths, one-based lines and local-only requirements; uppercase .TXT support is a small compatible convenience. Supplied behavior oracle passes.",
+        "scope_and_semantics": "Keeps the experiment disposable and offers a concrete timed protocol, a personal usefulness threshold and a compact observation table.",
+        "verification": "No authored tests or author smoke log are included. README claims synthetic trials and cleanup, but those claims are not independently documented in this packet; the supplied oracle is positive evidence only for its observed checks.",
+        "test_value": "Unobserved: no retained tests or author runtime transcript to assess. This is not treated as a mandatory test-suite omission for a throwaway experiment."
+      }
+    },
+    {
+      "candidate": "candidate-11",
+      "scores": {
+        "correctness": 3,
+        "scope_discipline": 3,
+        "simplicity": 3,
+        "completeness": 3,
+        "verification_quality": 3,
+        "test_value": 3,
+        "semantic_quality": 3,
+        "reviewability": 3,
+        "maintainability": 3,
+        "efficiency": null
+      },
+      "evidence": {
+        "implementation": "Appends include_archived=False after limit and retains original shallow-copy, filtering, ordering and slicing behavior, including positional limits.",
+        "tests": "Four passing tests cover default/explicit exclusion, filtering before the limit, inclusion, positional/keyword limits, order, list/dict shape, copies and unchanged inputs. Supplied behavior oracle passes; no mutation check was implemented.",
+        "scope_and_review": "Focused implementation and meaningful compatibility tests are strong for the request. Candidate-06 additionally documents the public API and checks zero/default limits and truthy archived flags; those are incremental strengths rather than defects here."
+      }
+    },
+    {
+      "candidate": "candidate-12",
+      "scores": {
+        "correctness": 3,
+        "scope_discipline": 3,
+        "simplicity": 3,
+        "completeness": 3,
+        "verification_quality": 3,
+        "test_value": 3,
+        "semantic_quality": 3,
+        "reviewability": 3,
+        "maintainability": 3,
+        "efficiency": null
+      },
+      "evidence": {
+        "implementation": "Both entry points enforce persisted tenant ownership through get_document; missing and unauthorized requests raise an empty NotFound and preserve signatures, authorized behavior and store API.",
+        "tests": "Six passing tests cover both entry points for authorized, unauthorized and missing documents, check nonrevealing errors, and explicitly assert store.delete is never called after denial. Supplied oracle passes and supplied mutation was killed.",
+        "scope_and_review": "Two focused changed files; authorization is shared without altering the serialized store contract. Delete-call assertions provide a small evidence advantage over state-only denial checks."
+      }
+    }
+  ],
+  "main_findings": [
+    "All twelve candidates pass the supplied behavior oracle.",
+    "Candidates 03/04 are identical no-change decisions; candidates 05/07 are identical minimal boundary fixes. Both kinds of restraint are appropriate to their tasks.",
+    "Candidate-08 has a limited Decimal exception-normalization gap relative to candidate-09, despite both passing available checks.",
+    "Candidate-06 supplies somewhat broader public-library documentation and compatibility tests than candidate-11; both implement the API correctly.",
+    "Candidate-12 adds explicit no-delete-call assertions to the same sound authorization design as candidate-02.",
+    "Candidates 01/10 provide suitable small experiments and useful trial plans, but their README verification claims lack an accompanying author smoke log."
+  ]
+}

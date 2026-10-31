@@ -1,0 +1,57 @@
+{
+  "case": "regression",
+  "arm": "on",
+  "behavior_oracle": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-c",
+      "import sys; sys.path.insert(0, \".\")\n\nfrom decimal import Decimal\nfrom invoice import invoice_total\nassert invoice_total('description,amount\\n\"Tea, green\",2.50\\nBread,3.25\\n') == Decimal('5.75')\nassert invoice_total('description,amount\\n\"Tea\\ngreen\",2.50\\n') == Decimal('2.50')\nassert isinstance(invoice_total(''), Decimal)\nassert invoice_total('description,amount\\n\\n') == Decimal(0)\nfor text in ['description,amount\\nTea,nope\\n', 'description,amount\\nTea\\n', 'description,amount\\nTea,1e1000000\\n']:\n    try: invoice_total(text)\n    except ValueError: pass\n    else: raise AssertionError('invalid row silently accepted')\n"
+    ],
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 10, in <module>\n  File \"/workspace/scratch/008f5900336e/pilot/cell-n/repo/invoice.py\", line 22, in invoice_total\n    total += Decimal(fields[1])\ndecimal.Overflow: [<class 'decimal.Overflow'>]\n",
+    "seconds": 0.017
+  },
+  "own_tests": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-v"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "test_basic (test_invoice.InvoiceTests.test_basic) ... ok\ntest_empty_and_blank_rows (test_invoice.InvoiceTests.test_empty_and_blank_rows) ... ok\ntest_invalid_rows_raise_value_error (test_invoice.InvoiceTests.test_invalid_rows_raise_value_error) ... ok\ntest_quoted_comma_in_description (test_invoice.InvoiceTests.test_quoted_comma_in_description) ... ok\n\n----------------------------------------------------------------------\nRan 4 tests in 0.000s\n\nOK\n",
+    "seconds": 0.05,
+    "test_count": 4,
+    "status": "passed"
+  },
+  "changed_files": [
+    "invoice.py",
+    "test_invoice.py"
+  ],
+  "git_numstat": "18\t8\tinvoice.py\n15\t0\ttest_invoice.py\n",
+  "untracked_files": [],
+  "no_change_gate": null,
+  "mutation": {
+    "mutation": "quoted-csv",
+    "status": "killed",
+    "result": {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-v"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "test_basic (test_invoice.InvoiceTests.test_basic) ... ok\ntest_empty_and_blank_rows (test_invoice.InvoiceTests.test_empty_and_blank_rows) ... ok\ntest_invalid_rows_raise_value_error (test_invoice.InvoiceTests.test_invalid_rows_raise_value_error) ... \n  test_invalid_rows_raise_value_error (test_invoice.InvoiceTests.test_invalid_rows_raise_value_error) (row='Tea,1.00,extra') ... FAIL\n  test_invalid_rows_raise_value_error (test_invoice.InvoiceTests.test_invalid_rows_raise_value_error) (row='\"Tea,1.00') ... FAIL\ntest_quoted_comma_in_description (test_invoice.InvoiceTests.test_quoted_comma_in_description) ... ERROR\n\n======================================================================\nERROR: test_quoted_comma_in_description (test_invoice.InvoiceTests.test_quoted_comma_in_description)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/pc-mutant-tuosc2o1/invoice.py\", line 12, in invoice_total\n    total += Decimal(fields[1])\n             ^^^^^^^^^^^^^^^^^^\ndecimal.InvalidOperation: [<class 'decimal.ConversionSyntax'>]\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/tmp/pc-mutant-tuosc2o1/test_invoice.py\", line 9, in test_quoted_comma_in_description\n    total = invoice_total('description,amount\\n\"Tea, loose leaf\",2.50\\nCake,1.25\\n')\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/pc-mutant-tuosc2o1/invoice.py\", line 14, in invoice_total\n    raise ValueError('invalid invoice row') from exc\nValueError: invalid invoice row\n\n======================================================================\nFAIL: test_invalid_rows_raise_value_error (test_invoice.InvoiceTests.test_invalid_rows_raise_value_error) (row='Tea,1.00,extra')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/pc-mutant-tuosc2o1/test_invoice.py\", line 20, in test_invalid_rows_raise_value_error\n    with self.assertRaises(ValueError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n\n======================================================================\nFAIL: test_invalid_rows_raise_value_error (test_invoice.InvoiceTests.test_invalid_rows_raise_value_error) (row='\"Tea,1.00')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/pc-mutant-tuosc2o1/test_invoice.py\", line 20, in test_invalid_rows_raise_value_error\n    with self.assertRaises(ValueError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n\n----------------------------------------------------------------------\nRan 4 tests in 0.001s\n\nFAILED (failures=2, errors=1)\n",
+      "seconds": 0.051,
+      "test_count": 4,
+      "status": "failed"
+    }
+  },
+  "notes": "Subjective dimensions require rubric review; test pass alone is not full correctness."
+}

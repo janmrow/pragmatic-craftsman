@@ -1,0 +1,21 @@
+{
+  "note": "Description-routing candidates for v0.2 (software implementation and change, excluding general explanations, summaries, translation, and mechanical formatting unless requested). These are test prompts, not measured native results.",
+  "explicit": [
+    {"prompt": "Use $pragmatic-craftsman to fix this one-line retry bug.", "activate": true},
+    {"prompt": "Use the pragmatic-craftsman skill to decide whether this refactor is worth doing.", "activate": true}
+  ],
+  "implicit_candidates": [
+    {"prompt": "Add an archived filter to list_documents without breaking existing callers.", "activate": true},
+    {"prompt": "Start a small CLI tool that searches local text notes and prints matching lines.", "activate": true},
+    {"prompt": "Set up a basic end-to-end web test for our login flow with clear failure output.", "activate": true},
+    {"prompt": "Refactor this pricing module so the next tariff change is easier to make.", "activate": true},
+    {"prompt": "Fix the cross-tenant document access bug across affected entry points.", "activate": true},
+    {"prompt": "Add CSV export for task records using what the project already has.", "activate": true},
+    {"prompt": "Explain what this function does.", "activate": false},
+    {"prompt": "Summarize this diff in plain language.", "activate": false},
+    {"prompt": "Translate this code comment into Polish.", "activate": false},
+    {"prompt": "What is the time complexity of binary search?", "activate": false},
+    {"prompt": "Format this JSON document.", "activate": false},
+    {"prompt": "Rewrap these markdown paragraphs to 80 columns.", "activate": false}
+  ]
+}

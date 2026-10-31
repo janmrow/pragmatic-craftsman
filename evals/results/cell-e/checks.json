@@ -1,0 +1,59 @@
+{
+  "case": "unsafe-small",
+  "arm": "off",
+  "behavior_oracle": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-c",
+      "import sys; sys.path.insert(0, \".\")\n\nfrom service import get_document,delete_document,NotFound\nfrom store import Store\ns=Store([{'id':'a','tenant_id':'A','title':'secret'},{'id':'b','tenant_id':'B','title':'other'}])\nfor action in [get_document,delete_document]:\n    for doc in ['a','missing']:\n        try: action(s,'B',doc)\n        except NotFound: pass\n        else: raise AssertionError('missing or unauthorized operation not rejected')\nassert s.get('a')['title']=='secret'\nassert get_document(s,'A','a')['title']=='secret'\nassert delete_document(s,'A','a') is None\nassert s.get('a') is None and s.get('b')['title']=='other'\n"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "seconds": 0.012
+  },
+  "own_tests": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-v"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "test_authorized_delete_returns_none_and_removes_document (test_service.DocumentServiceTests.test_authorized_delete_returns_none_and_removes_document) ... ok\ntest_authorized_read_returns_document (test_service.DocumentServiceTests.test_authorized_read_returns_document) ... ok\ntest_cross_tenant_delete_raises_not_found_without_deleting (test_service.DocumentServiceTests.test_cross_tenant_delete_raises_not_found_without_deleting) ... ok\ntest_cross_tenant_read_raises_not_found (test_service.DocumentServiceTests.test_cross_tenant_read_raises_not_found) ... ok\ntest_missing_delete_raises_not_found_without_deleting (test_service.DocumentServiceTests.test_missing_delete_raises_not_found_without_deleting) ... ok\ntest_missing_read_raises_not_found (test_service.DocumentServiceTests.test_missing_read_raises_not_found) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.001s\n\nOK\n",
+    "seconds": 0.065,
+    "test_count": 6,
+    "status": "passed"
+  },
+  "changed_files": [
+    "service.py",
+    "test_service.py"
+  ],
+  "git_numstat": "9\t1\tservice.py\n",
+  "untracked_files": [
+    "test_service.py"
+  ],
+  "no_change_gate": null,
+  "mutation": {
+    "mutation": "cross-tenant-read",
+    "status": "killed",
+    "result": {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-v"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "test_authorized_delete_returns_none_and_removes_document (test_service.DocumentServiceTests.test_authorized_delete_returns_none_and_removes_document) ... ok\ntest_authorized_read_returns_document (test_service.DocumentServiceTests.test_authorized_read_returns_document) ... ok\ntest_cross_tenant_delete_raises_not_found_without_deleting (test_service.DocumentServiceTests.test_cross_tenant_delete_raises_not_found_without_deleting) ... FAIL\ntest_cross_tenant_read_raises_not_found (test_service.DocumentServiceTests.test_cross_tenant_read_raises_not_found) ... FAIL\ntest_missing_delete_raises_not_found_without_deleting (test_service.DocumentServiceTests.test_missing_delete_raises_not_found_without_deleting) ... FAIL\ntest_missing_read_raises_not_found (test_service.DocumentServiceTests.test_missing_read_raises_not_found) ... FAIL\n\n======================================================================\nFAIL: test_cross_tenant_delete_raises_not_found_without_deleting (test_service.DocumentServiceTests.test_cross_tenant_delete_raises_not_found_without_deleting)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/pc-mutant-z5gqunb7/test_service.py\", line 42, in test_cross_tenant_delete_raises_not_found_without_deleting\n    with self.assertRaises(NotFound) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: NotFound not raised\n\n======================================================================\nFAIL: test_cross_tenant_read_raises_not_found (test_service.DocumentServiceTests.test_cross_tenant_read_raises_not_found)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/pc-mutant-z5gqunb7/test_service.py\", line 24, in test_cross_tenant_read_raises_not_found\n    with self.assertRaises(NotFound) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: NotFound not raised\n\n======================================================================\nFAIL: test_missing_delete_raises_not_found_without_deleting (test_service.DocumentServiceTests.test_missing_delete_raises_not_found_without_deleting)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/pc-mutant-z5gqunb7/test_service.py\", line 50, in test_missing_delete_raises_not_found_without_deleting\n    with self.assertRaises(NotFound) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: NotFound not raised\n\n======================================================================\nFAIL: test_missing_read_raises_not_found (test_service.DocumentServiceTests.test_missing_read_raises_not_found)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/pc-mutant-z5gqunb7/test_service.py\", line 30, in test_missing_read_raises_not_found\n    with self.assertRaises(NotFound) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: NotFound not raised\n\n----------------------------------------------------------------------\nRan 6 tests in 0.001s\n\nFAILED (failures=4)\n",
+      "seconds": 0.06,
+      "test_count": 6,
+      "status": "failed"
+    }
+  },
+  "notes": "Subjective dimensions require rubric review; test pass alone is not full correctness."
+}

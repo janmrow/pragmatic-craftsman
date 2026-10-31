@@ -1,0 +1,24 @@
+{
+  "case": "no-op",
+  "arm": "off",
+  "created_utc": "2026-10-31T21:37:49Z",
+  "repo": "/workspace/scratch/008f5900336e/pilot/cell-h/repo",
+  "baseline_commit": "c0f1b700e5cf0999b9b35bfc2e68e86286ffb947",
+  "baseline_files": {
+    ".gitignore": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793",
+    "README.md": "5608fc34ae9ed2ed93df76a0158a60092510ed8e34916490de5d0f37485aa6f7",
+    "notes.py": "bd9098a260c7b342082c9f3320769cac49433726b138d915d95085ae4e8238cd",
+    "test_notes.py": "4de2ac78877b8f24e288aade2932347b075219a50b1d1ffe23f9c4bde2566ac4"
+  },
+  "skill_files": {},
+  "runtime": {
+    "python": "3.12.14",
+    "agent": "Fresh-context Work Mode subagent, identical inherited platform instructions in both arms",
+    "model": "Inherited session model; exact serving identifier not exposed",
+    "effort": "Inherited; not exposed",
+    "instruction_isolation": "fork_turns=none; no parent task/research history; prototype not yet in discovery catalog; only on prompt names its file"
+  },
+  "invocation": "off",
+  "artifact_repo": "repo",
+  "note": "Original repo absolute path retained as provenance. For new local runs use prepare; this copied result has no .git history."
+}

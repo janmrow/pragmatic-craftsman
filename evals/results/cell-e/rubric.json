@@ -1,0 +1,42 @@
+{
+  "correctness": {
+    "score": null,
+    "evidence": ""
+  },
+  "scope_discipline": {
+    "score": null,
+    "evidence": ""
+  },
+  "simplicity": {
+    "score": null,
+    "evidence": ""
+  },
+  "completeness": {
+    "score": null,
+    "evidence": ""
+  },
+  "verification_quality": {
+    "score": null,
+    "evidence": ""
+  },
+  "test_value": {
+    "score": null,
+    "evidence": ""
+  },
+  "semantic_quality": {
+    "score": null,
+    "evidence": ""
+  },
+  "reviewability": {
+    "score": null,
+    "evidence": ""
+  },
+  "maintainability": {
+    "score": null,
+    "evidence": ""
+  },
+  "efficiency": {
+    "score": null,
+    "evidence": ""
+  }
+}

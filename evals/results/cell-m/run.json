@@ -1,0 +1,24 @@
+{
+  "case": "regression",
+  "arm": "off",
+  "created_utc": "2026-10-31T21:44:58Z",
+  "repo": "/workspace/scratch/008f5900336e/pilot/cell-m/repo",
+  "baseline_commit": "a976a7653d312289d45dc07f68791c6302cfa531",
+  "baseline_files": {
+    ".gitignore": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793",
+    "README.md": "5608fc34ae9ed2ed93df76a0158a60092510ed8e34916490de5d0f37485aa6f7",
+    "invoice.py": "d092ee7459b0cca4ca07d4e225fe06d7420de3ffd4c67c12935d144f499cd246",
+    "test_invoice.py": "48b4bd810bfa14f7cab884453311344df9ef0942e4aca94507fac2456cf51791"
+  },
+  "skill_files": {},
+  "runtime": {
+    "python": "3.12.14",
+    "agent": "Fresh-context Work Mode subagent, identical inherited platform instructions in both arms",
+    "model": "Inherited session model; exact serving identifier not exposed",
+    "effort": "Inherited; not exposed",
+    "instruction_isolation": "fork_turns=none; no parent task/research history; prototype not yet in discovery catalog; only on prompt names its file"
+  },
+  "invocation": "off",
+  "artifact_repo": "repo",
+  "note": "Original repo absolute path retained as provenance. For new local runs use prepare; this copied result has no .git history."
+}

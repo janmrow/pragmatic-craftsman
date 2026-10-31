@@ -1,0 +1,5 @@
+Use $pragmatic-craftsman. Read the skill at /root/.codex/skills/remote-skills/pragmatic-craftsman/SKILL.md.
+
+Would a generic Repository interface and factory improve this personal script? There is one stable JSON store and no planned second backend. Inspect it and implement an abstraction only if it solves a concrete problem.
+
+Work only in this repository, except reading the named skill if supplied. Do not inspect sibling runs or evaluator files. Complete the task and report the decisive evidence.

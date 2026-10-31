@@ -1,0 +1,3 @@
+Fix the cross-tenant access bug in this document service. Request context supplies authenticated tenant_id. Document IDs are globally unique. Apply the existing not-found policy to unauthorized read/delete and add regression coverage. Preserve public signatures and the store API.
+
+Work only in this repository, except reading the named skill if supplied. Do not inspect sibling runs or evaluator files. Complete the task and report the decisive evidence.

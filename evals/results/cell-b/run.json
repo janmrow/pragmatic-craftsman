@@ -1,0 +1,29 @@
+{
+  "case": "trivial",
+  "arm": "on",
+  "created_utc": "2026-10-31T21:37:48Z",
+  "repo": "/workspace/scratch/008f5900336e/pilot/cell-b/repo",
+  "baseline_commit": "e1d042578462ce1b5d7255e605c9df37a20126ba",
+  "baseline_files": {
+    ".gitignore": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793",
+    "README.md": "5608fc34ae9ed2ed93df76a0158a60092510ed8e34916490de5d0f37485aa6f7",
+    "retry.py": "e07b2d29ad1e3fd56d42e98761ae8f0825180cd3d76c6eac4e513b1762f891d3",
+    "test_retry.py": "3aa2efe8576f6911b04d3ad4543746054039764cc12bbdccdbdda8e22aafc2b8"
+  },
+  "skill_files": {
+    "SKILL.md": "9fd876a1b1f9ded4f28ad3a633e869b683bb8bfac85571f0d7e0e00050ac28f3",
+    "agents/openai.yaml": "6660db915535e8b78bdcd1be8f08c2474c474350181582a87068c834fa539d41",
+    "references/design-decisions.md": "d057c283d5bbf8fe286fbb9a31c2faf7e9c25ab20bbc9c1b97fba21688f207a5",
+    "references/evidence.md": "2b55094bcc731b479d25fef95ead3dfe9c0cc008b2baf082c490f013aff648e2"
+  },
+  "runtime": {
+    "python": "3.12.14",
+    "agent": "Fresh-context Work Mode subagent, identical inherited platform instructions in both arms",
+    "model": "Inherited session model; exact serving identifier not exposed",
+    "effort": "Inherited; not exposed",
+    "instruction_isolation": "fork_turns=none; no parent task/research history; prototype not yet in discovery catalog; only on prompt names its file"
+  },
+  "invocation": "file",
+  "artifact_repo": "repo",
+  "note": "Original repo absolute path retained as provenance. For new local runs use prepare; this copied result has no .git history."
+}
