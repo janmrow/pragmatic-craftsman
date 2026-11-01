@@ -1,6 +1,6 @@
 # Executed evaluation (v0.1 archive) — 2026-10-31
 
-Historical record of the v0.1 pilot (which tested the earlier three-file prototype with `references/design-decisions.md` and `references/evidence.md`). The current v0.2 consolidated single-file `SKILL.md` has not been re-evaluated; no empirical superiority over the baseline is claimed.
+Historical record of the v0.1 pilot (which tested the earlier three-file prototype with `references/design-decisions.md` and `references/evidence.md`). Neither the archived v0.2 single-file skill (`evals/results/v0.2-skill.json`) nor the current v0.3 compact decision-layer skill has been evaluated across full multi-model trials yet; no empirical superiority over the baseline is claimed.
 
 ## What ran
 
@@ -65,4 +65,4 @@ Priorities: (1) native CLI A/B with recorded exact model/trace; (2) repeated bou
 
 `cell-a` through `cell-l` are the first paired trials; `cell-m`/`cell-n` are repeated CSV off/on. Each includes original prompt, provenance, complete final repository files, diff and independent check output. `.git` and interpreter caches are omitted. Use `prepare` to create a fresh scored repository; copied result folders are evidence, not restartable worktrees.
 
-`blind-packets.json`, `blind-scores.json` and `blind-map.json` allow auditing the blinded review. The packets preserve the original minimal-oracle pass flags; per-cell checks use the strengthened final oracle. `iteration-1-skill.json` preserves the initial v0.1 pilot skill bytes; `cell-n/run.json` records the hashes of the post-pilot v0.1 error-contract revision. The shipped `pragmatic-craftsman/` package and `MANIFEST.json` now contain the consolidated v0.2 single-file skill. No raw subagent action transcript is claimed or fabricated.
+`blind-packets.json`, `blind-scores.json` and `blind-map.json` allow auditing the blinded review. The packets preserve the original minimal-oracle pass flags; per-cell checks use the strengthened final oracle. `iteration-1-skill.json` preserves the initial v0.1 pilot skill bytes; `cell-n/run.json` records the hashes of the post-pilot v0.1 error-contract revision; `v0.2-skill.json` preserves the v0.2 consolidated skill bytes. The shipped `pragmatic-craftsman/` package and `MANIFEST.json` now contain the v0.3 compact decision-layer skill. No raw subagent action transcript is claimed or fabricated.

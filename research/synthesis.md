@@ -53,9 +53,10 @@ KEEP preserves a useful decision criterion. ADAPT changes its application for an
 |---|---|---|---|
 | Generation can outpace review | ADAPT | Coherent slices; inspect final causal diff | Practitioner analysis [C7], not a measured universal law |
 | Local patterns influence generation | ADAPT | Read a relevant example, preserve intent, challenge a known defect | Practitioner/vendor experience [C7/V1] |
-| Selective context is valuable | KEEP | Self-contained single `SKILL.md` (metadata first, body on activation; no overlapping `references/`) | Specification & vendor guidance [A1/A2/O1/V1]; related context-file experiment [E3] |
+| Selective context is valuable | KEEP | Self-contained single `SKILL.md` (<400 body words; metadata first, body on activation; no overlapping `references/`) | Specification & vendor guidance [A1/A2/O1/V1]; related context-file experiment [E3] |
+| Action bias & partial-fix abstention | KEEP | Verify whether and where the problem exists before editing; leave working code unchanged on stale reports or unwarranted abstractions, and check sibling/nested paths on partial fixes | Controlled benchmark [E5] |
 | Tests/builds provide executable feedback | KEEP | Use real repo commands and relevant boundaries | Vendor operational practice [O2/R13] |
-| Generated code/tests can share mistakes | ADAPT | Hand-derived/contract expectations and targeted counterexamples | Practitioner warning [C7]; own control design |
+| Generated code/tests can share mistakes | ADAPT | Contract-derived expectations, disagreement investigation, and targeted mutation probes | Practitioner warning [C7] & benchmark evidence [E6] |
 | Long autonomous work can drift | ADAPT | Reconcile slice and final diff with outcome; preserve state when needed | Vendor experience [V2] |
 | Fresh review may catch other defects | CONTEXTUAL | Raw task, contract and diff for consequential uncertainty | Evaluation practice [A3/V3]; benefit here unproven |
 | Vague goals invite too much/too little code | ADAPT | Concrete success example and consequential-ambiguity rule | Practitioner experience; own synthesis |

@@ -1,27 +1,32 @@
 # pragmatic-craftsman design
 
-A self-contained engineering judgment skill for everyday software implementation and change: adding features, starting projects, creating test infrastructure, fixing bugs, and refactoring. Its organizing credo is:
+A portable, self-contained **decision-quality layer for coding agents**. Rather than trying to teach a capable model how to write code, `pragmatic-craftsman` intervenes on the specific engineering judgment failures that remain common even in frontier coding agents. Its organizing credo is:
 
 > **Solve the real problem. Keep the solution clear and complete. Make the next change easier.**
 
-It is not a book summary, a substitute for domain expertise, a project manager, a style guide, an audit framework, or a rigid development lifecycle. Its value should appear in decisions and code rather than process narration.
+User instructions and repository-specific rules take precedence. The skill is not a book summary, a substitute for domain expertise, a project manager, a style guide, an audit framework, or mandatory ceremony. Its value should appear in decisions and code rather than process narration.
 
-## Intellectual center
+## Intellectual and empirical center
 
 **The Pragmatic Programmer (20th Anniversary Edition)** supplies feedback-limited commitment, authoritative knowledge ownership (DRY vs. coincidental textual similarity), domain language, tracer bullets versus learning prototypes, reversibility, and context-dependent quality.
 
 **The Software Craftsman** supplies professional accountability, sustainable changeability, viable alternatives when constraints conflict, and technical practices justified by value rather than ritual. Sandro Mancuso's *Software Craftsmanship in the AI Era* sharpens the focus on semantic boundaries, human reviewability, and independent test expectations; his *Should we always use TDD to design?* keeps TDD contextual alongside spikes and contract sketches.
 
-**Complementary complexity lens:** *Just Enough* (`janmrow/just-enough`) contributes the habit of asking what added complexity buys today compared with a simpler alternative, preserving complexity that genuinely earns its cost, and stopping when further refinement no longer pays off. Martin Fowler's accounts of *YAGNI* and *Beck's Simple Design Rules* reinforce that rejecting speculative features does not mean rejecting refactoring, clarifying boundaries, or investing in near-term changeability: minimizing elements serves correctness and clear intent rather than outranking them.
+**Complementary complexity lens:** *Just Enough* (`janmrow/just-enough`) contributes the habit of asking what added complexity buys today compared with a simpler alternative, preserving complexity that genuinely earns its cost, and stopping when further refinement no longer pays off. Martin Fowler's accounts of *YAGNI* and *Beck's Simple Design Rules* reinforce that rejecting speculative features does not mean rejecting refactoring, clarifying boundaries, or investing in near-term changeability.
+
+**Empirical failure modes of coding agents:**
+- **Action bias & premature abstention (`E5`, FixedBench):** Coding agents frequently modify already-correct code on stale reports or unwarranted requests, yet naive "reproduce first" instructions can make them abstain prematurely on partially fixed issues.
+- **Self-confirming verification (`E6`, TestSuiteBench):** Agents often build software they fail to verify adequately, writing tests that mirror implementation assumptions or miss boundary and error-domain mutants.
+- **Always-on instruction overhead (`E3`, SRI/ETH `AGENTS.md` study):** Broad repository context files can increase exploration and testing cost without improving task success, motivating a compact, conditionally activated skill rather than always-on generic advice.
 
 ## Architecture decision
 
 | Candidate | Assessment |
 |---|---|
-| **A: One self-contained `SKILL.md`** | **Chosen (v0.2).** Progressive disclosure already occurs between YAML frontmatter metadata and the skill body. All high-leverage decision rules fit in one ~550-word read without reference-routing failure or extra tool calls. |
-| B: Minimal router only | Requires a second file read before any engineering guidance is in context. |
-| C: Small core with contextual `references/` | Used in v0.1 (`SKILL.md` + `design-decisions.md` + `evidence.md`, 1,543 words total). Rejected after review: the two short references overlapped heavily with the root file, left the root overly abstract, and were not loaded in any v0.1 pilot handoff. |
-| D: Modes, scripts, and multi-skill chains | Unnecessary coordination and maintenance overhead for a general engineering judgment skill. |
+| **A: Compact single-file `SKILL.md` (~415 body words)** | **Chosen (v0.3).** Progressive disclosure already occurs between YAML frontmatter metadata and the skill body. Compressing from v0.2's 577 body words to 415 dense words removes generic coding advice ("read relevant files", "use domain names") and highlights high-contrast decision rules. |
+| B: Broader single-file `SKILL.md` (v0.2, 577 body words) | Consolidated v0.1's three files into one, but used a catch-all coding `description` and retained ~30% generic guidance that capable models already follow by default. Archived in `evals/results/v0.2-skill.json` for 3-arm comparisons. |
+| C: Small core with contextual `references/` (v0.1, 1,493–1,543 words) | Rejected after v0.1 review: the two short references overlapped heavily with the root file and were never loaded in v0.1 pilot handoffs. Initial pilot snapshot archived in `evals/results/iteration-1-skill.json`. |
+| D: Modes, scripts, and multi-skill chains | Unnecessary coordination and maintenance overhead for an engineering decision skill. |
 
 Installed package:
 
@@ -31,36 +36,21 @@ pragmatic-craftsman/
   agents/openai.yaml
 ```
 
-`SKILL.md` uses standard `name` and `description` frontmatter and a self-contained Markdown body; exact file hashes and word counts are tracked in `MANIFEST.json`. `agents/openai.yaml` supplies optional OpenAI/Codex display metadata and invocation policy. All research, design rationale, and evaluation tools live outside the installed package.
+`SKILL.md` uses standard `name`, `description`, and `license: MIT` frontmatter and a self-contained Markdown body; exact file hashes and word counts are validated against `MANIFEST.json` by `python3 evals/run.py validate`. `agents/openai.yaml` supplies optional OpenAI/Codex display metadata and invocation policy. All research, design rationale, and evaluation tools live outside the installed package.
 
-## Behavioral commitments
+## Target failure modes and behavioral commitments
 
-The skill organizes judgment around six connected commitments—applied directly in work rather than recited as six response sections:
+The skill organizes judgment around four connected commitments—applied directly in work rather than recited as response sections:
 
-1. **Understand the outcome and context:** Identify the intended outcome (behavior, structure, learning, or testability) and scope boundaries. Separate the user's underlying need from a proposed mechanism; question unnecessary work respectfully while honoring informed requirements.
-2. **Make complexity earn its place:** Compare added layers, dependencies, or abstractions against simpler alternatives. Keep or introduce structure when it improves present correctness, clarity, isolation, or changeability—even with a single current implementation—without judging by line or implementation count alone.
-3. **Design around meaning:** Use domain names and coherent responsibilities. Give each business rule or security invariant one authoritative owner across entry points; do not merge unrelated concepts that merely look alike, and preserve independent enforcement at separate trust boundaries.
-4. **Make complete, reviewable changes:** Cover affected consumers and safeguards. Preserve supported caller-visible contracts (defaults, signatures, outputs, side effects, and relied-upon failure behavior) when changing internals; change a supported contract only when required by the requested outcome and within authorized scope, and make that change explicit. Provide enough structure on new projects or test setups for one representative working path.
-5. **Scale effort and feedback to the work:** Calibrate investment by the consequences of the change—affected contracts, trust boundaries, persistent state, reversibility, and failure cost—rather than the repository's label. Prove a thin working path early across boundaries, reduce the cost of changing consequential decisions without indefinite delay, and offer a smaller complete outcome if constraints conflict with essential safety or correctness.
-6. **Establish credible evidence and stop at enough:** Choose checks that could falsify the change plus required repo gates. Ground expectations independently of generated code, check whether a plausible wrong implementation would still pass, never weaken a failing assertion to force a green run, and stop once the authorized scope and proportionate evidence are complete.
-
-### Practical bias across everyday work
-
-| Work | Expected influence |
+| Agent failure mode | `pragmatic-craftsman` commitment |
 |---|---|
-| **Add a feature** | Reuse the project's existing mechanisms and finish one complete path (including callers and negative cases) without hypothetical extension hooks. |
-| **Start a small project** | Establish enough structure for a working end-to-end result and the next likely change, avoiding premature framework ceremony. |
-| **Create web test infrastructure** | Support one representative user journey with understandable setup and diagnosable failures before building an abstraction layer for imagined suites. |
-| **Refactor an API** | Clarify domain responsibilities and characterize weakly tested behavior while deliberately preserving supported callers, defaults, and failure semantics. |
-| **Trivial bug fix** | Make the direct fix and run the nearest check without planning narration or redundant harness setup. |
-| **Consequential data/security change** | Enforce the invariant at every affected entry point and verify rejected inputs, partial failure, and recovery regardless of a "quick" or "prototype" label. |
+| **Action & sycophancy bias** (modifying working code on stale reports, blindly building a user-suggested mechanism, or stopping at the first passing check on a partial fix) | **1. Verify the gap before acting:** Separate the needed outcome from a suggested mechanism or diagnosis. Leave working code unchanged when no gap exists; inspect sibling paths and nested cases when a bug is only partially fixed. |
+| **Architecture / complexity bias** (adding speculative abstractions, hooks, or dependencies—or refusing structure that improves present clarity and isolation) | **2. Make complexity earn its place:** Require present value over a simpler alternative and prefer existing platform capabilities, while introducing boundaries or test scaffolding when they improve present correctness, isolation, or near-term changeability. |
+| **Semantic & contract drift** (patching only one endpoint of a shared invariant, deduplicating across distinct trust boundaries, or silently narrowing caller-visible error domains and signatures) | **3. Protect ownership and contracts:** Give each domain or security rule one authoritative owner across affected entry points, keep independent enforcement across trust boundaries, and preserve caller-visible signatures, defaults, return shapes, and error domains unless authorized. |
+| **Disproportionate ceremony & self-confirming tests** (running heavyweight process on a 1-line fix, under-verifying destructive prototype code, or mirroring buggy code into test assertions) | **4. Scale effort and verify independently:** Scale effort to blast radius, reversibility, and failure cost rather than repo labels; derive test expectations from contracts or hand-worked examples, investigate code-vs-contract disagreements, and ensure a plausible wrong implementation would fail. |
 
 ## Activation contract
 
-The frontmatter `description` targets everyday software creation and modification—features, project setup, test infrastructure, bug fixes, and refactoring—so users do not need to phrase their prompt as an "engineering tradeoff" before the skill applies. General explanations, summaries, translation, and mechanical formatting are excluded unless `pragmatic-craftsman` is explicitly invoked.
+Unlike v0.2's broad "everyday software engineering" description, v0.3 targets **diagnosing bugs, evaluating abstractions or dependencies, refactoring, changing APIs or security/state boundaries, and writing test suites—where root cause, scope, caller contracts, or test oracles can be mistaken**. Explanations, summaries, Q&A, and routine mechanical edits (renames, formatting, typos, minor dependency bumps, CSS tweaks, standard boilerplate) are excluded unless `pragmatic-craftsman` is explicitly invoked.
 
-In v0.2, `agents/openai.yaml` sets `allow_implicit_invocation: true` so normal host matching is available alongside explicit invocation (`$pragmatic-craftsman` or `/pragmatic-craftsman`). Host matching is a convenience, not a guarantee. During controlled A/B evaluations, the `off` arm should be isolated by keeping the skill out of all project and global discovery paths rather than relying on adapter flags.
-
-## Evaluation status and deferred work
-
-`EVALS.md` and `evals/RESULTS.md` preserve the historical v0.1 evaluation contract and 14-session pilot conducted on the earlier three-file prototype. Those trials have not been rerun on v0.2, and no claim of empirical superiority over a baseline is made. Queued evaluation harness and fixture repairs are documented in `EVALS.md` to be completed before running future trials.
+In `agents/openai.yaml`, `allow_implicit_invocation: true` remains enabled so supporting hosts can match the narrowed description automatically alongside explicit invocation (`$pragmatic-craftsman` in Codex, `/pragmatic-craftsman` in Claude Code, `@pragmatic-craftsman` in OpenCode, or skill activation in Gemini CLI). During controlled A/B evaluations, the `off` arm must be isolated by keeping the skill out of all project and global discovery paths, and routing, explicit invocation, and skill content are evaluated as distinct experimental questions.

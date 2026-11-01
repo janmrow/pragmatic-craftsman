@@ -1,62 +1,119 @@
-[
-  {
-    "case": "trivial",
-    "oracle_exit": 1,
-    "expectation_met": true
-  },
-  {
-    "case": "regression",
-    "oracle_exit": 1,
-    "expectation_met": true
-  },
-  {
-    "case": "vague-feature",
-    "oracle_exit": 1,
-    "expectation_met": true
-  },
-  {
-    "case": "weekend",
-    "oracle_exit": 1,
-    "expectation_met": true
-  },
-  {
-    "case": "legacy",
-    "oracle_exit": 0,
-    "expectation_met": true
-  },
-  {
-    "case": "dependency",
-    "oracle_exit": 1,
-    "expectation_met": true
-  },
-  {
-    "case": "api",
-    "oracle_exit": 1,
-    "expectation_met": true
-  },
-  {
-    "case": "tests",
-    "oracle_exit": 0,
-    "expectation_met": true
-  },
-  {
-    "case": "oss",
-    "oracle_exit": 1,
-    "expectation_met": true
-  },
-  {
-    "case": "business",
-    "oracle_exit": 1,
-    "expectation_met": true
-  },
-  {
-    "case": "no-op",
-    "oracle_exit": 0,
-    "expectation_met": true
-  },
-  {
-    "case": "unsafe-small",
-    "oracle_exit": 1,
-    "expectation_met": true
+{
+  "cases": [
+    {
+      "case": "trivial",
+      "split": "dev",
+      "category": "proportionality",
+      "oracle_exit": 1,
+      "expectation_met": true
+    },
+    {
+      "case": "regression",
+      "split": "dev",
+      "category": "contracts-ownership",
+      "oracle_exit": 1,
+      "expectation_met": true
+    },
+    {
+      "case": "vague-feature",
+      "split": "dev",
+      "category": "complexity",
+      "oracle_exit": 1,
+      "expectation_met": true
+    },
+    {
+      "case": "weekend",
+      "split": "dev",
+      "category": "proportionality",
+      "oracle_exit": 1,
+      "expectation_met": true
+    },
+    {
+      "case": "legacy",
+      "split": "dev",
+      "category": "contracts-ownership",
+      "oracle_exit": 1,
+      "expectation_met": true
+    },
+    {
+      "case": "dependency",
+      "split": "holdout",
+      "category": "complexity",
+      "oracle_exit": 1,
+      "expectation_met": true
+    },
+    {
+      "case": "api",
+      "split": "dev",
+      "category": "contracts-ownership",
+      "oracle_exit": 1,
+      "expectation_met": true
+    },
+    {
+      "case": "tests",
+      "split": "dev",
+      "category": "verification",
+      "oracle_exit": 1,
+      "expectation_met": true
+    },
+    {
+      "case": "oss",
+      "split": "dev",
+      "category": "proportionality",
+      "oracle_exit": 1,
+      "expectation_met": true
+    },
+    {
+      "case": "business",
+      "split": "holdout",
+      "category": "contracts-ownership",
+      "oracle_exit": 1,
+      "expectation_met": true
+    },
+    {
+      "case": "no-op",
+      "split": "dev",
+      "category": "action-bias",
+      "oracle_exit": 0,
+      "expectation_met": true
+    },
+    {
+      "case": "unsafe-small",
+      "split": "dev",
+      "category": "contracts-ownership",
+      "oracle_exit": 1,
+      "expectation_met": true
+    },
+    {
+      "case": "already-fixed",
+      "split": "holdout",
+      "category": "action-bias",
+      "oracle_exit": 0,
+      "expectation_met": true
+    },
+    {
+      "case": "partial-fix",
+      "split": "holdout",
+      "category": "action-bias",
+      "oracle_exit": 1,
+      "expectation_met": true
+    },
+    {
+      "case": "wrong-diagnosis",
+      "split": "holdout",
+      "category": "action-bias",
+      "oracle_exit": 1,
+      "expectation_met": true
+    }
+  ],
+  "harness_checks": {
+    "committed_diff_captured": true,
+    "untracked_numstat_captured": true,
+    "native_skill_excluded_from_changes": true,
+    "tool_cache_excluded_from_changes": true,
+    "mutant_killed_on_fixed_trivial": true,
+    "baseline_tests_do_not_kill_mutants": true,
+    "archived_v0.1_materialized": true,
+    "archived_v0.2_materialized": true
   }
-]
+}

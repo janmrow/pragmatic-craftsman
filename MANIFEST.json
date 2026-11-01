@@ -1,23 +1,27 @@
 {
   "name": "pragmatic-craftsman",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "date": "2026-11-01",
-  "status": "consolidated single-file skill for daily use; empirical superiority not claimed",
+  "status": "compact decision-quality skill for experimentation and real-project evaluation; empirical superiority not claimed",
   "license": "MIT",
   "skill_files": {
     "SKILL.md": {
-      "sha256": "67b5c6dfb14b47215df2d40cb8cbcb14c07ca482378ea7f8522bf99156ee8b69",
-      "bytes": 4601,
-      "words_whitespace": 627,
-      "words_markdown_body": 577,
-      "lines": 48
+      "sha256": "c7a2e99ee819350e48cc9b71417bf395adf480acdc8c1c447e9fb167da260036",
+      "bytes": 3378,
+      "words_whitespace": 462,
+      "words_markdown_body": 415,
+      "lines": 42
     },
     "agents/openai.yaml": {
-      "sha256": "c817f1f920275c3712e23fb497724f280e2b8b2de3630fe637045b48d13fc900",
-      "bytes": 288,
-      "words_whitespace": 28,
+      "sha256": "f29ead7d2164dadcacbf60bd9ab979621cc4d0458ad4067f8960c10679f203fb",
+      "bytes": 311,
+      "words_whitespace": 30,
       "lines": 6
     }
+  },
+  "archived_snapshots": {
+    "0.1.0": "evals/results/iteration-1-skill.json",
+    "0.2.0": "evals/results/v0.2-skill.json"
   },
   "historical_v0_1_eval": {
     "harness_python": "3.12.14",
